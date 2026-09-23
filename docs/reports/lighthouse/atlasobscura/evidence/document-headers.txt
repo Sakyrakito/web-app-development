@@ -1,0 +1,33 @@
+# Source: network-log.json → document (DevTools Network → www.atlasobscura.com, type document → Headers).
+# Cookie values and cf-ray replaced with <redacted>.
+GET https://www.atlasobscura.com/  →  200
+
+## Response Headers
+alt-svc: h3=":443"; ma=86400
+cache-control: max-age=0, private, must-revalidate
+cf-cache-status: DYNAMIC
+cf-ray: <redacted>
+content-encoding: br
+content-security-policy-report-only: script-src 'unsafe-inline' 'unsafe-eval'; connect-src 'none'; report-uri https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=8IfpJTHE_GgoIpfAhQhhJN4zZx8yrQa3MJU5VZnMSps-1790186817.3296714-1.0.1.1-.vKvQh578B1AV7M8Oin6n6rmHza26vIXI0sg0zDfMAIJgw3QeHS7G0.H7_n61gj0cw4yZK7OzpSuuiALKPL0R2gjhpxTEuMa03doNJO4g.xB1muuF_3iLA1_5pwNeInOotZN0o.VG6MyozYRiVjnRqnIMvv42rkI3nG7cLIN6UvbclG67Lhphxgy2fbVb5Ng; report-to cf-csp-endpoint
+content-type: text/html; charset=utf-8
+date: Wed, 23 Sep 2026 18:06:57 GMT
+nel: {"report_to":"heroku-nel","response_headers":["Via"],"max_age":3600,"success_fraction":0.01,"failure_fraction":0.1}
+referrer-policy: strict-origin-when-cross-origin
+report-to: {"group":"heroku-nel","endpoints":[{"url":"https://nel.heroku.com/reports?s=jh3EYRzkx4AlLh8CST5c6zTfjl6PTVCE0cmRJi%2FKO1c%3D\u0026sid=af571f24-03ee-46d1-9f90-ab9030c2c74c\u0026ts=1790186817"}],"max_age":3600}
+  {"group":"cf-csp-endpoint","max_age":86400,"endpoints":[{"url":"https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=8IfpJTHE_GgoIpfAhQhhJN4zZx8yrQa3MJU5VZnMSps-1790186817.3296714-1.0.1.1-.vKvQh578B1AV7M8Oin6n6rmHza26vIXI0sg0zDfMAIJgw3QeHS7G0.H7_n61gj0cw4yZK7OzpSuuiALKPL0R2gjhpxTEuMa03doNJO4g.xB1muuF_3iLA1_5pwNeInOotZN0o.VG6MyozYRiVjnRqnIMvv42rkI3nG7cLIN6UvbclG67Lhphxgy2fbVb5Ng"}]}
+reporting-endpoints: heroku-nel="https://nel.heroku.com/reports?s=jh3EYRzkx4AlLh8CST5c6zTfjl6PTVCE0cmRJi%2FKO1c%3D&sid=af571f24-03ee-46d1-9f90-ab9030c2c74c&ts=1790186817"
+  cf-csp-endpoint="https://csp-reporting.cloudflare.com/cdn-cgi/script_monitor/report?m=8IfpJTHE_GgoIpfAhQhhJN4zZx8yrQa3MJU5VZnMSps-1790186817.3296714-1.0.1.1-.vKvQh578B1AV7M8Oin6n6rmHza26vIXI0sg0zDfMAIJgw3QeHS7G0.H7_n61gj0cw4yZK7OzpSuuiALKPL0R2gjhpxTEuMa03doNJO4g.xB1muuF_3iLA1_5pwNeInOotZN0o.VG6MyozYRiVjnRqnIMvv42rkI3nG7cLIN6UvbclG67Lhphxgy2fbVb5Ng"
+server: cloudflare
+server-timing: cfCacheStatus;desc="DYNAMIC"
+  cfEdge;dur=8,cfOrigin;dur=44
+strict-transport-security: max-age=300
+vary: Origin
+via: 1.1 heroku-router
+x-content-type-options: nosniff
+x-download-options: noopen
+x-frame-options: SAMEORIGIN
+x-permitted-cross-domain-policies: none
+x-request-id: 6703ab28-8af4-394d-7eb8-343639acc997
+x-runtime: 0.011312
+x-xss-protection: 0
+set-cookie: user_signed_in=<redacted>; path=/; samesite=lax

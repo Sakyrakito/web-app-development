@@ -1,0 +1,3 @@
+2026-09-23T20:52:42+03:00
+Google Chrome 152.0.7977.82 
+DNS: Chrome secure DNS (DoH) via https://cloudflare-dns.com/dns-query

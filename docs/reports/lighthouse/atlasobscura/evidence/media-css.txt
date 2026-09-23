@@ -1,0 +1,32 @@
+# Source: response bodies of first-party stylesheets (DevTools Network → CSS → Response), saved in css/.
+# Reproduce: open each stylesheet's Response tab and Ctrl+F "@media"; or run:
+#   grep -o '@media[^{]*' css/<file> | sort | uniq -c | sort -rn
+
+## css/aon-cc246122.css (0 @media blocks)
+
+## css/aon.tailwind-26057ac9.css (201 @media blocks)
+     50 @media (min-width:768px)
+     43 @media (min-width:1024px)
+     29 @media (min-width:1536px)
+     24 @media (min-width:1280px)
+     17 @media (min-width:640px)
+     12 @media (min-width:960px)
+      4 @media (prefers-reduced-motion:no-preference)
+      2 @media screen and (-ms-high-contrast:none)
+      2 @media (prefers-reduced-motion:reduce)
+      2 @media (max-width:767px)
+      2 @media (max-width:640px)
+      1 @media screen and (min-width:768px)
+      1 @media screen and (min-width:640px)
+      1 @media screen and (min-width:1280px)
+      1 @media screen and (min-width:1024px)
+      1 @media print
+      1 @media not all and (min-width:768px)
+      1 @media (min-width:825px) and (max-width:1059px)
+      1 @media (min-width:768px) and (max-width:824px)
+      1 @media (min-width:605px)
+      1 @media (min-width:540px)
+      1 @media (min-width:1140px)
+      1 @media (min-width:1060px) and (max-width:1139px)
+      1 @media (min-width:1048px)
+      1 @media (max-width:768px)

@@ -1,0 +1,33 @@
+# Source: DevTools Network → request "www.historypin.org" (type document) → Headers.
+# Cookie values replaced with <redacted>; everything else verbatim.
+GET https://www.historypin.org/  →  200
+
+## Response Headers
+alt-svc: h3=":443"; ma=86400
+cache-control: private
+cf-cache-status: DYNAMIC
+cf-ray: <redacted>
+content-encoding: zstd
+content-language: en
+content-type: text/html; charset=utf-8
+cross-origin-opener-policy: same-origin
+date: Wed, 23 Sep 2026 17:50:18 GMT
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+referrer-policy: same-origin
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=<redacted>"}]}
+server: cloudflare
+set-cookie: csrftoken=<redacted>; expires=Wed, 22 Sep 2027 17:50:18 GMT; Max-Age=31449600; Path=/; SameSite=Lax; Secure
+set-cookie: __cf_bm=<redacted>; HttpOnly; SameSite=None; Secure; Path=/; Domain=www.historypin.org; Expires=Wed, 23 Sep 2026 18:20:18 GMT
+vary: Cookie, Accept-Language, Accept-Encoding
+x-content-type-options: nosniff
+x-do-app-origin: <redacted>
+x-do-orig-status: 200
+x-frame-options: DENY
+
+# Source: DevTools Network → POST .../cdn-cgi/challenge-platform/h/b/jsd/oneshot/... → Response Headers
+server: cloudflare
+set-cookie: cf_clearance=<redacted>; HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=historypin.org; Expires=Thu, 23 Sep 2027 17:50:20 GMT
+
+# Source: DevTools Network → POST https://www.google-analytics.com/g/collect?... (en=page_view) → Response Headers
+# No set-cookie header present. _ga / _ga_GCQC5WS5N1 are set from JS (visible in document.cookie, see storage.json).
+server: Golfe2
