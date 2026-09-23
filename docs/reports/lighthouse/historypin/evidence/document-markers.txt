@@ -1,0 +1,14 @@
+# Source: DevTools Network → document request → Response tab (raw HTML as served, before JS).
+# Reproduce: open the Response tab and use Ctrl+F for each marker; counts below are occurrences.
+# Response size: 111940 bytes (decoded).
+     17 @click
+     11 data-djc-id
+     10 x-show
+      4 x-on:mouseleave
+      4 x-on:mouseenter
+      4 x-data
+      2 x-on:click
+      2 hx-post
+      2 hx-get
+      2 csrfmiddlewaretoken
+      1 hx-headers

@@ -1,0 +1,72 @@
+# Source: network-log.json (454 requests, recorded 2026-09-23T18:06:55.946Z).
+# b = before consent click, a = after. Reproduce: DevTools Network → Filter by the domain.
+
+## Google Tag Manager: 2 requests (b=2, a=0)
+  googletagmanager.com/gtm.js?id=GTM-KXJCD57
+  googletagmanager.com/gtm.js?id=GTM-PH5RC2F
+
+## gtag.js (GA4): 4 requests (b=4, a=0)
+  googletagmanager.com/gtag/js?id=G-VE390YR3HM
+  googletagmanager.com/gtag/js?id=G-M3FGM78D1R
+  googletagmanager.com/gtag/js?id=G-FVWZ0RM4DH
+
+## GA4 collect: 6 requests (b=5, a=1)
+  analytics.google.com/g/collect?v=2&tid=G-VE390YR3HM
+  analytics.google.com/g/collect?v=2&tid=G-M3FGM78D1R
+
+## Meta (Facebook) Pixel: 3 requests (b=3, a=0)
+  connect.facebook.net/en_US/fbevents.js
+  connect.facebook.net/signals/config/1651185805144770
+  facebook.com/tr/?id=1651185805144770
+
+## Hotjar: 1 requests (b=1, a=0)
+  static.hotjar.com/c/hotjar-1038905.js
+
+## TikTok Pixel: 1 requests (b=1, a=0)
+  analytics.tiktok.com/i18n/pixel/events.js?sdkid=CUUUR7JC77UF169S8CUG
+
+## Microsoft Clarity: 1 requests (b=1, a=0)
+  clarity.ms/tag/lf5vdfyz6d
+
+## Pinterest Tag: 5 requests (b=5, a=0)
+  s.pinimg.com/ct/core.js
+  ct.pinterest.com/user/
+  ct.pinterest.com/v3/
+  ct.pinterest.com/static/ct/token_create.js
+  ct.pinterest.com/ct.html
+
+## Plausible: 1 requests (b=1, a=0)
+  plausible.io/js/plausible.js
+
+## Cloudflare Web Analytics: 1 requests (b=1, a=0)
+  static.cloudflareinsights.com/beacon.min.js
+
+## comScore: 2 requests (b=2, a=0)
+  scorecardresearch.com/internal-cs/default/beacon.js
+  scorecardresearch.com/b2
+
+## Quantcast: 1 requests (b=1, a=0)
+  secure.quantserve.com/quant.js
+
+## Klaviyo: 3 requests (b=3, a=0)
+  static.klaviyo.com/onsite/js/UUnqkC/klaviyo.js
+
+## New Relic Browser: 3 requests (b=3, a=0)
+  js-agent.newrelic.com/nr-spa-1.322.0.min.js
+  bam.nr-data.net/1/bed08a364b
+  bam.nr-data.net/events/1/bed08a364b
+
+## PostHog (via t.atlasobscura.com): 5 requests (b=5, a=0)
+  t.atlasobscura.com/static/array.js
+  t.atlasobscura.com/array/phc_SucV5M5eBqInHpKLD5mfN5spAiIDSh5npOgIpz6CKv4/config.js
+  t.atlasobscura.com/static/1.434.11/surveys.js
+  t.atlasobscura.com/static/1.434.11/posthog-recorder.js
+  t.atlasobscura.com/static/1.434.11/dead-clicks-autocapture.js
+
+## OneTrust (CMP): 10 requests (b=10, a=0)
+  cdn.cookielaw.org/consent/c7042f21-9a02-4cf6-ad42-3e1f237e2b50/OtAutoBlock.js
+  cdn.cookielaw.org/consent/c7042f21-9a02-4cf6-ad42-3e1f237e2b50/otSDKStub.js
+  cdn.cookielaw.org/consent/c7042f21-9a02-4cf6-ad42-3e1f237e2b50/c7042f21-9a02-4cf6-ad42-3e1f237e2b50.json
+  cdn.cookielaw.org/scripttemplates/6.39.0/otBannerSdk.js
+  cdn.cookielaw.org/consent/c7042f21-9a02-4cf6-ad42-3e1f237e2b50/0195b557-04fe-772f-a4b3-f52283a097e5/en.json
+  cdn.cookielaw.org/scripttemplates/6.39.0/assets/otFloatingRounded.json

@@ -1,0 +1,477 @@
+{
+ "url": "https://www.historypin.org/",
+ "recordedAt": "2026-09-23T18:02:42.017Z",
+ "chrome": "Chrome/152.0.7977.82",
+ "secondsPerPhase": 20,
+ "consentSelector": "",
+ "consent": "no selector given",
+ "requestCount": 43,
+ "requests": [
+  {
+   "phase": "before-consent",
+   "t": 56,
+   "method": "GET",
+   "url": "https://www.historypin.org/",
+   "type": "Document",
+   "status": 200,
+   "setCookie": [
+    "csrftoken=<redacted>; expires=Wed, 22 Sep 2027 18:02:57 GMT; Max-Age=31449600; Path=/; SameSite=Lax; Secure",
+    "__cf_bm=<redacted>; HttpOnly; SameSite=None; Secure; Path=/; Domain=www.historypin.org; Expires=Wed, 23 Sep 2026 18:32:57 GMT"
+   ]
+  },
+  {
+   "phase": "before-consent",
+   "t": 16192,
+   "method": "GET",
+   "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css",
+   "type": "Stylesheet",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16192,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/style/main.5a02606b4a87.css",
+   "type": "Stylesheet",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16192,
+   "method": "GET",
+   "url": "https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js",
+   "type": "Script",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16192,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/django_htmx/htmx.min.b2e3e68dc374.js",
+   "type": "Script",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16193,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/logo.40427c4fe352.svg",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16193,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/home-hero-left.582edcdb3a8a.webp",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16193,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/home-hero-right.5c09e0657851.webp",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16193,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/home-hero-mobile.92b4ce4f9ef4.webp",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16194,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/city.0c220871c8b9.svg",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16194,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/pin.982c6809dae0.svg",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16194,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/country.661a04e27454.svg",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16194,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/global.235b42df6bea.svg",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16194,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/hp-logo-white.b73d46b12c62.svg",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16195,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/sc-logo.cbb98d4fa8ca.png",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16195,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/js/utils.3ca7b635bc9e.js",
+   "type": "Script",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 16195,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/django_components/django_components.min.55fb1994e4a5.js",
+   "type": "Script",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 17943,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/style/fonts.4081a91ede52.css",
+   "type": "Stylesheet",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18256,
+   "method": "GET",
+   "url": "https://www.googletagmanager.com/gtm.js?id=GTM-K2CK5LGL",
+   "type": "Script",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18308,
+   "method": "GET",
+   "url": "data:image/svg+xml, <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d=\"M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z\"/></svg>",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18310,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/creativity-tile.13ece6494687.webp",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18310,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/resistance-tile.13db5fd1526b.webp",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18310,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/movements-tile.d26c7e35165b.webp",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18310,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/world-around-us-tile.6e5a702feb53.webp",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18310,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/rituals-tile.eec96aa80595.webp",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18310,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/humans-tile.821274dcb15e.webp",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18311,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/family-tile.7e94f1e03289.webp",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18311,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/innovation-tile.3164907932c3.webp",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18311,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/style/fonts/poppins/poppins-latin-500-normal.8ec288e7f6a5.woff",
+   "type": "Font",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18311,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/style/fonts/poppins/poppins-latin-400-normal.42d8a788393a.woff",
+   "type": "Font",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18311,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/style/fonts/poppins/poppins-latin-600-normal.eb6945b4340d.woff",
+   "type": "Font",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18311,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/style/fonts/lora/lora-latin-600-normal.97b30ccef4d2.woff",
+   "type": "Font",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18311,
+   "method": "GET",
+   "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-solid-900.woff2",
+   "type": "Font",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18311,
+   "method": "GET",
+   "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-brands-400.woff2",
+   "type": "Font",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18312,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/home-collection-theme-bg.936f0775ffc4.png",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18312,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/home-about-bg.5c9586f1772f.png",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 18312,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/home-donate.0da8fe94eef2.png",
+   "type": "Image",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 19299,
+   "method": "GET",
+   "url": "https://www.historypin.org/cdn-cgi/challenge-platform/h/b/scripts/jsd/d76008a69eab/main.js?",
+   "type": "Script",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 19380,
+   "method": "GET",
+   "url": "https://www.googletagmanager.com/gtag/js?id=G-GCQC5WS5N1&cx=c&gtm=4e69m0",
+   "type": "Script",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 19495,
+   "method": "POST",
+   "url": "https://www.historypin.org/cdn-cgi/challenge-platform/h/b/jsd/oneshot/d76008a69eab/0.9529598935563017:1790182826:B9EwEarSiw6iEmEuwkZm54VDfcnFv53olluojKaCwRg/a3fb7645496db8d8",
+   "type": "XHR",
+   "status": 200,
+   "setCookie": [
+    "cf_clearance=<redacted>; HttpOnly; SameSite=None; Partitioned; Secure; Path=/; Domain=historypin.org; Expires=Thu, 23 Sep 2027 18:03:01 GMT"
+   ]
+  },
+  {
+   "phase": "before-consent",
+   "t": 19814,
+   "method": "POST",
+   "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-GCQC5WS5N1&gtm=45je69m0v9237361771z89237245813za20gzb9237245813zd9237245813xf1&_p=1790186580272&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=1255481520.1790186582&frm=0&ngs=1&pscdl=noapi&rcb=16&sr=1920x1080&uaa=x86&uab=64&uafvl=Chromium%3B152.0.7977.82%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.82&uam=&uamb=0&uap=Linux&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~120213116~120385422~120412528~120469145~120469153&sid=1790186581&sct=1&seg=0&dl=https%3A%2F%2Fwww.historypin.org%2F&dt=Home%20%7C%20Historypin&en=page_view&_fv=1&_nsi=1&_ss=1&tfd=19753",
+   "type": "Fetch",
+   "status": "failed: net::ERR_ABORTED",
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 19820,
+   "method": "GET",
+   "url": "https://www.historypin.org/static/web/images/favicon.3c7702544ccf.ico",
+   "type": "Other",
+   "status": 200,
+   "setCookie": []
+  },
+  {
+   "phase": "before-consent",
+   "t": 24814,
+   "method": "POST",
+   "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-GCQC5WS5N1&gtm=45je69m0v9237361771z89237245813za20gzb9237245813zd9237245813xf1&_p=1790186580272&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&cid=1255481520.1790186582&frm=0&ngs=1&pscdl=noapi&rcb=16&sr=1920x1080&uaa=x86&uab=64&uafvl=Chromium%3B152.0.7977.82%7CNot%253FA_Brand%3B24.0.0.0%7CGoogle%2520Chrome%3B152.0.7977.82&uam=&uamb=0&uap=Linux&uapv=&uaw=0&ul=en-us&_s=2&tag_exp=115938465~115938469~118897920~118897930~120213116~120385422~120412528~120469145~120469153&sid=1790186581&sct=1&seg=0&dl=https%3A%2F%2Fwww.historypin.org%2F&dt=Home%20%7C%20Historypin&en=HP%20GA4%20Event&_et=4&tfd=24759",
+   "type": "Fetch",
+   "status": "failed: net::ERR_ABORTED",
+   "setCookie": []
+  }
+ ],
+ "cookies": [
+  {
+   "name": "csrftoken",
+   "domain": "www.historypin.org",
+   "path": "/",
+   "expires": 1821636178.055193,
+   "size": 41,
+   "httpOnly": false,
+   "secure": true,
+   "session": false,
+   "sameSite": "Lax",
+   "priority": "Medium",
+   "sourceScheme": "Secure",
+   "sourcePort": 443
+  },
+  {
+   "name": "__cf_bm",
+   "domain": ".www.historypin.org",
+   "path": "/",
+   "expires": 1790188378.055312,
+   "size": 205,
+   "httpOnly": true,
+   "secure": true,
+   "session": false,
+   "sameSite": "None",
+   "priority": "Medium",
+   "sourceScheme": "Secure",
+   "sourcePort": 443
+  },
+  {
+   "name": "cf_clearance",
+   "domain": ".historypin.org",
+   "path": "/",
+   "expires": 1821722581.775214,
+   "size": 481,
+   "httpOnly": true,
+   "secure": true,
+   "session": false,
+   "sameSite": "None",
+   "priority": "Medium",
+   "sourceScheme": "Secure",
+   "sourcePort": 443,
+   "partitionKey": {
+    "topLevelSite": "https://historypin.org",
+    "hasCrossSiteAncestor": false
+   }
+  },
+  {
+   "name": "_ga",
+   "domain": ".historypin.org",
+   "path": "/",
+   "expires": 1824746581.821935,
+   "size": 30,
+   "httpOnly": false,
+   "secure": false,
+   "session": false,
+   "priority": "Medium",
+   "sourceScheme": "Secure",
+   "sourcePort": 443
+  },
+  {
+   "name": "_ga_GCQC5WS5N1",
+   "domain": ".historypin.org",
+   "path": "/",
+   "expires": 1824746581.829153,
+   "size": 59,
+   "httpOnly": false,
+   "secure": false,
+   "session": false,
+   "priority": "Medium",
+   "sourceScheme": "Secure",
+   "sourcePort": 443
+  }
+ ]
+}

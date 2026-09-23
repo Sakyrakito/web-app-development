@@ -1,0 +1,113 @@
+# Source: network-log.json → cookies (CDP Storage.getCookies: all cookies in the browser, incl. HttpOnly and third-party), recorded 2026-09-23T18:06:55.946Z, after consent click.
+# Reproduce: DevTools → Application → Cookies (each listed domain). (H) = HttpOnly, (P) = Partitioned.
+total 172; first-party 38; third-party 134; HttpOnly 39; partitioned 15
+
+## First-party (38)
+  www.atlasobscura.com  user_signed_in
+  www.atlasobscura.com  _session_production (H)
+  www.atlasobscura.com  _aaw_sid
+  www.atlasobscura.com  _aaw_uid
+  www.atlasobscura.com  _lr_retry_request
+  www.atlasobscura.com  _lr_env_src_ats
+  www.atlasobscura.com  ph_session_id
+  .atlasobscura.com  cf_clearance (H) (P)
+  www.atlasobscura.com  flx_uid
+  www.atlasobscura.com  hb_insticator_uid
+  www.atlasobscura.com  gc_session_id
+  www.atlasobscura.com  gcid_first
+  www.atlasobscura.com  __kla_id
+  .atlasobscura.com  _gcl_au
+  .atlasobscura.com  _ga
+  .atlasobscura.com  _au_1d
+  www.atlasobscura.com  idw-fe-id
+  .atlasobscura.com  _ga_M3FGM78D1R
+  .atlasobscura.com  _tt_enable_cookie
+  .atlasobscura.com  _ttp
+  .atlasobscura.com  _pin_unauth
+  .atlasobscura.com  __qca
+  .atlasobscura.com  _clck
+  .atlasobscura.com  _hjSessionUser_1038905
+  .atlasobscura.com  _hjSession_1038905
+  .atlasobscura.com  __gads
+  .atlasobscura.com  __gpi
+  .atlasobscura.com  __eoi
+  .atlasobscura.com  _clsk
+  .atlasobscura.com  FCCDCF
+  .atlasobscura.com  FCNEC
+  .atlasobscura.com  cto_bundle
+  .atlasobscura.com  ph_phc_SucV5M5eBqInHpKLD5mfN5spAiIDSh5npOgIpz6CKv4_posthog
+  .atlasobscura.com  OptanonAlertBoxClosed
+  .atlasobscura.com  OptanonConsent
+  .atlasobscura.com  _ga_VE390YR3HM
+  .atlasobscura.com  ttcsid
+  .atlasobscura.com  ttcsid_CUUUR7JC77UF169S8CUG
+
+## Third-party: 68 domains
+  yieldoptimizer.com: ph, fbh0, dph, gcma, rmxc, cktst, ckid
+  a-mo.net: amuid2 (H), pamuid2 (H) (P), _sv3_11 (H), p_sv3_11 (H) (P), _sv3_4 (H), p_sv3_4 (H) (P)
+  rubiconproject.com: khaos, khaos_p (P), audit_p (P), audit, receive-cookie-deprecation (H) (P)
+  pubmatic.com: KTPCACOOKIE, KADUSERCOOKIE, KRTBCOOKIE_153, PugT
+  pippio.com: did, didts, nnls, pxrc
+  linkedin.com: li_sugr, bcookie, lidc, __cf_bm (H)
+  bidswitch.net: tuuid, c, tuuid_lu, google_push
+  servenobid.com: pid_312, pid_346, pid_351, pid_324
+  tapad.com: TapAd_TS, TapAd_DID, TapAd_3WAY_SYNCS
+  casalemedia.com: CMID, CMPS, CMPRO
+  c.clarity.ms: SM, MR, ANONCHK
+  rfihub.com: ruds, eud, rud
+  pbs.nextmillmedia.com: nmm-ss-cps-usr, nmm-ss-cps-usr-exp
+  dc.arrivalist.com: avlukey (H), avlcnt (H)
+  nexx360.io: xxuid (H), n360-sharethrough (H)
+  connectad.io: uid (H), id
+  openx.net: i, pd
+  scorecardresearch.com: UID, XID (P)
+  adnxs.com: XANDR_PANID (P), uuid2 (H)
+  media.net: visitor-id, data-gc
+  adsrvr.org: TDID, TDCPM
+  doubleclick.net: IDE (H), APC (P)
+  exchange.omni-dex.io: vdzj1_94c8d6c7, vdz_sync
+  quantserve.com: mc, sp
+  ad.gt: au_id, au_3p_check
+  go.sonobi.com: __uis, HAPLB8G
+  360yield.com: tuuid (H), tuuid_lu (H)
+  rlcdn.com: rlas3, pxrc
+  criteo.com: uid, cto_bundle (P)
+  creativecdn.com: g, ts (P)
+  smaato.net: SCM, SCMg
+  beacon.lynx.cognitivlabs.com: UID, ss
+  c.bing.com: MR, SRM_B
+  floxis.tech: __fxId, __fxDp
+  prebid.a-mo.net: sd_amuid2 (H), psd_amuid2 (H) (P)
+  sitescout.com: ssi, _ssuma
+  nextmillmedia.com: nm_sovrn, nm_unruly
+  krushmedia.com: krm_usr (H), krm_r (H)
+  use3-sync.a-mo.net: sd_amuid2 (H), psd_amuid2 (H) (P)
+  cookies.nextmillmedia.com: nm_lastSync, nm_syncedBidders
+  www.recaptcha.net: _GRECAPTCHA (H)
+  js.ubembed.com: __cf_bm (H)
+  s.cdn.gcprivacy.net: __cf_bm (H)
+  ids.api.gcprivacy.id: gcid (H)
+  prebid.trustedstack.com: receive-cookie-deprecation (H) (P)
+  static.anonm.io: 3pc_test
+  blismedia.com: b
+  yahoo.com: A3 (H)
+  analytics.yahoo.com: IDSYNC
+  www.clarity.ms: CLID (H)
+  richaudience.com: pdid (H)
+  stay22.com: __cf_bm (H)
+  tiktok.com: _ttp
+  account.anonymised.io: sub3 (H)
+  3lift.com: tluid
+  turn.com: uid
+  adform.net: uid
+  smilewanted.com: sw_marker (H)
+  advolve.io: x (H)
+  prebid-server.pbstck.com: uids
+  trustedstack.com: visitor-id
+  disqus.com: zeta-ssp-user-id
+  sharethrough.com: stx_user_id
+  bing.com: MUID
+  clarity.ms: MUID
+  lijit.com: ljt_reader
+  1rx.io: _rxuuid (H)
+  targeting.unrulymedia.com: _rxuuid (H)
