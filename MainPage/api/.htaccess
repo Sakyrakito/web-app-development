@@ -1,0 +1,3 @@
+<FilesMatch "^(bootstrap|seed)\.php$|\.sql$">
+    Require all denied
+</FilesMatch>
