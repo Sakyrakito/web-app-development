@@ -1,24 +1,24 @@
 <?php
 /**
- * GET  /api/stories.php?sort=new|hot|top|near[&lat=&lng=][&category=][&offset=][&limit=] - лента
- * POST /api/stories.php  {text, category?, lat, lng, address?, place_id?} - новая история
+ * GET  /api/stories.php?sort=new|hot|top|near[&lat=&lng=][&category=][&offset=][&limit=]  — лента
+ * POST /api/stories.php  {text, category?, lat, lng, address?, place_id?}             — новая история
  */
 declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
 
 $method = require_method('GET', 'POST');
-$pdo = db();
+$pdo    = db();
 
 if ($method === 'GET') {
-    $sort = $_GET['sort'] ?? 'new';
+    $sort     = $_GET['sort'] ?? 'new';
     $category = category_param($_GET);
-    $limit = max(1, min(50, int_param($_GET, 'limit', 18)));
-    $offset = max(0, int_param($_GET, 'offset', 0));
-    $lat = float_param($_GET, 'lat', -90, 90);
-    $lng = float_param($_GET, 'lng', -180, 180);
+    $limit    = max(1, min(50, int_param($_GET, 'limit', 18)));
+    $offset   = max(0, int_param($_GET, 'offset', 0));
+    $lat      = float_param($_GET, 'lat', -90, 90);
+    $lng      = float_param($_GET, 'lng', -180, 180);
 
     $params = [':me' => ACTOR];
-    $sql = STORY_SELECT;
+    $sql    = STORY_SELECT;
     if ($category) {
         $sql .= ' AND s.category = :cat';
         $params[':cat'] = $category;
@@ -26,7 +26,7 @@ if ($method === 'GET') {
 
     switch ($sort) {
         case 'hot':
-            // «Обсуждают»: все голоса (и «верю», и «не верю»), делённые на возраст в часах -
+            // «Обсуждают»: все голоса (и «верю», и «не верю»), делённые на возраст в часах —
             // наверх всплывают свежие спорные истории.
             $sql .= " ORDER BY (s.likes + s.dislikes) * 1.0 / ((julianday('now') - julianday(s.created_at)) * 24 + 2) DESC, s.created_at DESC";
             break;
@@ -65,13 +65,13 @@ if ($method === 'GET') {
 }
 
 // --- POST: публикация ---
-$in = body();
-$text = trim((string) ($in['text'] ?? ''));
+$in       = body();
+$text     = trim((string) ($in['text'] ?? ''));
 $category = category_param($in);
-$lat = float_param($in, 'lat', -90, 90);
-$lng = float_param($in, 'lng', -180, 180);
-$placeId = int_param($in, 'place_id');
-$address = mb_substr(trim(strip_tags((string) ($in['address'] ?? ''))), 0, 200) ?: null;
+$lat      = float_param($in, 'lat', -90, 90);
+$lng      = float_param($in, 'lng', -180, 180);
+$placeId  = int_param($in, 'place_id');
+$address  = mb_substr(trim(strip_tags((string) ($in['address'] ?? ''))), 0, 200) ?: null;
 
 $len = mb_strlen($text);
 if ($len < TEXT_MIN) {

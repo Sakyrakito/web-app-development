@@ -7,7 +7,7 @@ declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
 
 require_method('POST');
-$in = body();
+$in      = body();
 $storyId = int_param($in, 'story_id') ?? fail('Не указана история');
 
 $pdo  = db();

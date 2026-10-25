@@ -1,20 +1,20 @@
 <?php
 /**
  * POST /api/vote.php  {story_id, value: 1 | -1}
- * Повторный голос с тем же значением снимает голос, противоположный - переключает.
+ * Повторный голос с тем же значением снимает голос, противоположный — переключает.
  */
 declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
 
 require_method('POST');
-$in = body();
+$in      = body();
 $storyId = int_param($in, 'story_id') ?? fail('Не указана история');
-$value = int_param($in, 'value');
+$value   = int_param($in, 'value');
 if ($value !== 1 && $value !== -1) {
     fail('value должен быть 1 или -1');
 }
 
-$pdo = db();
+$pdo  = db();
 $stmt = $pdo->prepare('SELECT author FROM stories WHERE id = ? AND hidden = 0');
 $stmt->execute([$storyId]);
 $author = $stmt->fetchColumn();
@@ -51,9 +51,9 @@ $pdo->commit();
 
 $story = find_story($storyId);
 json_out([
-    'id' => $story['id'],
-    'likes' => $story['likes'],
+    'id'       => $story['id'],
+    'likes'    => $story['likes'],
     'dislikes' => $story['dislikes'],
-    'rating' => $story['rating'],
-    'my_vote' => $story['my_vote'],
+    'rating'   => $story['rating'],
+    'my_vote'  => $story['my_vote'],
 ]);

@@ -5,12 +5,12 @@
  */
 declare(strict_types=1);
 
-const DB_PATH = __DIR__ . '/../storage/legends.sqlite';
-const POST_COOLDOWN = 300; // секунд между публикациями с одной сессии
-const TEXT_MIN = 20;
-const TEXT_MAX = 2000;
-const SNAP_METERS = 30; // история ближе этого расстояния прилипает к существующей точке
-const CATEGORIES = ['rumor', 'horror', 'history', 'omen'];
+const DB_PATH       = __DIR__ . '/../storage/legends.sqlite';
+const POST_COOLDOWN = 300;   // секунд между публикациями с одной сессии
+const TEXT_MIN      = 20;
+const TEXT_MAX      = 2000;
+const SNAP_METERS   = 30;    // история ближе этого расстояния прилипает к существующей точке
+const CATEGORIES    = ['rumor', 'horror', 'history', 'omen'];
 
 ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
@@ -26,12 +26,12 @@ set_exception_handler(function (Throwable $e): void {
 session_name('legends_sid');
 session_set_cookie_params([
     'lifetime' => 60 * 60 * 24 * 365,
-    'path' => '/',
+    'path'     => '/',
     'httponly' => true,
     'samesite' => 'Lax',
 ]);
 session_start();
-// В БД храним не сам id сессии, а его хеш - утечка базы не даст угнать сессии.
+// В БД храним не сам id сессии, а его хеш — утечка базы не даст угнать сессии.
 define('ACTOR', hash('sha256', session_id()));
 session_write_close();
 
@@ -49,7 +49,7 @@ function db(): PDO
     $fresh = !is_file(DB_PATH);
 
     $pdo = new PDO('sqlite:' . DB_PATH, null, null, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
     $pdo->exec('PRAGMA foreign_keys = ON');
@@ -107,7 +107,7 @@ function require_method(string ...$methods): string
     return $method;
 }
 
-/** Тело POST-запроса. Требуем JSON - обычная HTML-форма с чужого сайта так не отправит (защита от CSRF). */
+/** Тело POST-запроса. Требуем JSON — обычная HTML-форма с чужого сайта так не отправит (защита от CSRF). */
 function body(): array
 {
     if (!str_starts_with($_SERVER['CONTENT_TYPE'] ?? '', 'application/json')) {
@@ -158,10 +158,10 @@ function category_param(array $src): ?string
 
 function distance_m(float $lat1, float $lng1, float $lat2, float $lng2): float
 {
-    $r = 6371000;
+    $r    = 6371000;
     $dLat = deg2rad($lat2 - $lat1);
     $dLng = deg2rad($lng2 - $lng1);
-    $a = sin($dLat / 2) ** 2 + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
+    $a    = sin($dLat / 2) ** 2 + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
     return 2 * $r * asin(min(1, sqrt($a)));
 }
 
@@ -170,33 +170,33 @@ const STORY_SELECT = <<<SQL
     SELECT s.id, s.text, s.category, s.likes, s.dislikes,
            (s.likes - s.dislikes) AS rating, s.created_at,
            p.id AS place_id, p.lat, p.lng, p.address,
-           COALESCE(v.value, 0) AS my_vote,
-           (s.author = :me) AS mine,
-           (r.story_id IS NOT NULL) AS reported
+           COALESCE(v.value, 0)          AS my_vote,
+           (s.author = :me)              AS mine,
+           (r.story_id IS NOT NULL)      AS reported
       FROM stories s
-      JOIN places p ON p.id = s.place_id
- LEFT JOIN votes v ON v.story_id = s.id AND v.actor = :me
- LEFT JOIN reports r ON r.story_id = s.id AND r.actor = :me
+      JOIN places p       ON p.id = s.place_id
+ LEFT JOIN votes v        ON v.story_id = s.id AND v.actor = :me
+ LEFT JOIN reports r      ON r.story_id = s.id AND r.actor = :me
      WHERE s.hidden = 0
 SQL;
 
 function story_out(array $r): array
 {
     return [
-        'id' => (int) $r['id'],
-        'text' => $r['text'],
-        'category' => $r['category'],
-        'likes' => (int) $r['likes'],
-        'dislikes' => (int) $r['dislikes'],
-        'rating' => (int) $r['rating'],
+        'id'         => (int) $r['id'],
+        'text'       => $r['text'],
+        'category'   => $r['category'],
+        'likes'      => (int) $r['likes'],
+        'dislikes'   => (int) $r['dislikes'],
+        'rating'     => (int) $r['rating'],
         'created_at' => $r['created_at'],
-        'my_vote' => (int) $r['my_vote'],
-        'mine' => (bool) $r['mine'],
-        'reported' => (bool) $r['reported'],
-        'place' => [
-            'id' => (int) $r['place_id'],
-            'lat' => (float) $r['lat'],
-            'lng' => (float) $r['lng'],
+        'my_vote'    => (int) $r['my_vote'],
+        'mine'       => (bool) $r['mine'],
+        'reported'   => (bool) $r['reported'],
+        'place'      => [
+            'id'      => (int) $r['place_id'],
+            'lat'     => (float) $r['lat'],
+            'lng'     => (float) $r['lng'],
             'address' => $r['address'],
         ],
     ];

@@ -17,7 +17,7 @@
 <body>
 
 <div id="app" v-cloak>
-  <div class="app" :class="{ 'is-feed': mode === 'feed' }">
+  <div class="app" :class="{ 'is-feed': mode === 'feed', 'is-side-hidden': sideHidden && mode === 'map', 'is-top-hidden': topHidden && mode === 'map' }">
 
     <!-- ───────── Шапка: логотип · переключатель Карта/Лента · поиск ───────── -->
     <header class="top">
@@ -92,6 +92,19 @@
           <span class="map-hud__coords">{{ hud.lat }}° N · {{ hud.lng }}° E · z{{ hud.zoom }}</span>
           <span class="map-hud__me" v-if="geoAccuracy">вы здесь · точность ±{{ geoAccuracy }} м</span>
         </div>
+
+        <!-- ПК: скрыть/показать правую панель -->
+        <button type="button" class="map-toggle map-toggle--side" :class="{ 'is-off': sideHidden }"
+                :aria-pressed="sideHidden" :title="sideHidden ? 'Показать панель' : 'Скрыть панель'"
+                :aria-label="sideHidden ? 'Показать панель подробностей' : 'Скрыть панель подробностей'" @click="toggleSide">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg>
+        </button>
+        <!-- Телефон: скрыть/показать верхнее меню -->
+        <button type="button" class="map-toggle map-toggle--top" :class="{ 'is-off': topHidden }"
+                :aria-pressed="topHidden" :title="topHidden ? 'Показать меню' : 'Скрыть меню'"
+                :aria-label="topHidden ? 'Показать верхнее меню' : 'Скрыть верхнее меню'" @click="toggleTop">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/></svg>
+        </button>
 
         <p class="map-hint" v-if="panel !== 'compose'">
           <i aria-hidden="true">✦</i> Нажмите на любую точку карты, чтобы оставить легенду
@@ -273,6 +286,6 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.prod.js"></script>
-<script src="assets/js/app.js"></script>
+<script type="module" src="assets/js/main.js"></script>
 </body>
 </html>

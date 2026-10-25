@@ -1,7 +1,7 @@
 <?php
 /**
- * GET /api/places.php[?category=horror] - точки для маркеров карты (агрегаты по видимым историям)
- * GET /api/places.php?id=12 - одна точка со списком её историй
+ * GET /api/places.php[?category=horror]  — точки для маркеров карты (агрегаты по видимым историям)
+ * GET /api/places.php?id=12              — одна точка со списком её историй
  */
 declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
@@ -23,9 +23,9 @@ if ($id !== null) {
 
     json_out([
         'place' => [
-            'id' => (int) $place['id'],
-            'lat' => (float) $place['lat'],
-            'lng' => (float) $place['lng'],
+            'id'      => (int) $place['id'],
+            'lat'     => (float) $place['lat'],
+            'lng'     => (float) $place['lng'],
             'address' => $place['address'],
         ],
         'stories' => array_map('story_out', $stmt->fetchAll()),
@@ -34,13 +34,13 @@ if ($id !== null) {
 
 $category = category_param($_GET);
 $sql = "SELECT p.id, p.lat, p.lng, p.address,
-               COUNT(s.id) AS stories,
-               SUM(s.likes - s.dislikes) AS rating,
-               SUM(s.category = 'rumor') AS rumor,
-               SUM(s.category = 'horror') AS horror,
-               SUM(s.category = 'history') AS history,
-               SUM(s.category = 'omen') AS omen,
-               MAX(s.created_at) AS last_at
+               COUNT(s.id)                     AS stories,
+               SUM(s.likes - s.dislikes)       AS rating,
+               SUM(s.category = 'rumor')       AS rumor,
+               SUM(s.category = 'horror')      AS horror,
+               SUM(s.category = 'history')     AS history,
+               SUM(s.category = 'omen')        AS omen,
+               MAX(s.created_at)               AS last_at
           FROM places p
           JOIN stories s ON s.place_id = p.id AND s.hidden = 0"
      . ($category ? ' AND s.category = :cat' : '')
@@ -50,17 +50,17 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($category ? [':cat' => $category] : []);
 
 json_out(array_map(static fn(array $r) => [
-    'id' => (int) $r['id'],
-    'lat' => (float) $r['lat'],
-    'lng' => (float) $r['lng'],
+    'id'      => (int) $r['id'],
+    'lat'     => (float) $r['lat'],
+    'lng'     => (float) $r['lng'],
     'address' => $r['address'],
     'stories' => (int) $r['stories'],
-    'rating' => (int) $r['rating'],
-    'mix' => [
-        'rumor' => (int) $r['rumor'],
-        'horror' => (int) $r['horror'],
+    'rating'  => (int) $r['rating'],
+    'mix'     => [
+        'rumor'   => (int) $r['rumor'],
+        'horror'  => (int) $r['horror'],
         'history' => (int) $r['history'],
-        'omen' => (int) $r['omen'],
+        'omen'    => (int) $r['omen'],
     ],
     'last_at' => $r['last_at'],
 ], $stmt->fetchAll()));

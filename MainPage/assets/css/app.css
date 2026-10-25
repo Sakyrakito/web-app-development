@@ -1553,3 +1553,48 @@ svg {
 
   .toasts { bottom: calc(var(--peek) + 16px); }
 }
+
+/* ==========================================================================
+   Скрытие интерфейса на карте
+   ПК — правая панель (.side), телефон — верхнее меню (.top)
+   ========================================================================== */
+
+.map-toggle {
+  position: absolute;
+  z-index: 500;
+  top: 62px;                      /* под подсказкой «Нажмите на любую точку» */
+  right: 16px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(13, 12, 19, .62);
+  backdrop-filter: blur(14px);
+  color: var(--paper);
+  transition: transform .3s var(--ease-bounce), border-color .2s, color .2s;
+}
+.map-toggle:hover { transform: scale(1.08); border-color: var(--line-2); }
+.map-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.map-toggle.is-off { color: var(--ember-2); border-color: var(--ember-2); }
+.map-toggle--top { display: none; }
+
+@media (min-width: 861px) {
+  .app.is-side-hidden {
+    grid-template-areas:
+      "top  top   top"
+      "rail stage stage";
+  }
+  .app.is-side-hidden .side { display: none; }
+}
+
+@media (max-width: 860px) {
+  .map-toggle { top: 12px; right: 12px; }
+  .map-toggle--side { display: none; }
+  .map-toggle--top { display: grid; }
+
+  .app.is-top-hidden .top { display: none; }
+  /* без шапки чипы категорий сами уходят под вырез/статус-бар */
+  .app.is-top-hidden .rail { padding-top: max(12px, env(safe-area-inset-top)); }
+}

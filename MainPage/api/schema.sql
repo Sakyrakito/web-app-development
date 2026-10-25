@@ -1,4 +1,4 @@
--- «Городские легенды» - схема SQLite.
+-- «Городские легенды» — схема SQLite.
 -- Создаётся автоматически при первом обращении к API (см. bootstrap.php).
 
 PRAGMA foreign_keys = ON;
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS stories (
     dislikes   INTEGER NOT NULL DEFAULT 0,
     reports    INTEGER NOT NULL DEFAULT 0,
     hidden     INTEGER NOT NULL DEFAULT 0,
-    author     TEXT    NOT NULL, -- sha256 от id анонимной сессии
+    author     TEXT    NOT NULL,          -- sha256 от id анонимной сессии
     created_at TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_stories_place   ON stories(place_id, hidden);
