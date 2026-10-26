@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Городские легенды — ночной атлас города</title>
+  <meta name="description" content="Интерактивная карта города, где каждая точка хранит историю: слухи, страшилки, приметы и исторические факты.">
+  <meta name="theme-color" content="#0d0c13">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<div id="app" v-cloak>
+  <div class="app" :class="{ 'is-feed': mode === 'feed', 'is-side-hidden': sideHidden && mode === 'map', 'is-top-hidden': topHidden && mode === 'map' }">
+
+    <!-- ───────── Шапка: логотип · переключатель Карта/Лента · поиск ───────── -->
+    <header class="top">
+      <a class="brand" href="./" @click.prevent="goHome" aria-label="Городские легенды — на главную">
+        <span class="brand__mark" aria-hidden="true"><i></i></span>
+        <span class="brand__name"><small>Городские</small>легенды</span>
+      </a>
+
+      <nav class="switch" :class="{ 'is-feed': mode === 'feed' }" aria-label="Режим просмотра">
+        <span class="switch__thumb" aria-hidden="true"></span>
+        <button type="button" :class="{ 'is-active': mode === 'map' }" :aria-pressed="mode === 'map'" @click="mode = 'map'">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6.5v13L9 17l6 2.5 6-2.5V4l-6 2.5L9 4z"/><path d="M9 4v13M15 6.5v13"/></svg>
+          Карта
+        </button>
+        <button type="button" :class="{ 'is-active': mode === 'feed' }" :aria-pressed="mode === 'feed'" @click="mode = 'feed'">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="6" rx="2"/><rect x="4" y="14" width="16" height="6" rx="2"/></svg>
+          Лента
+          <sup v-if="totalStories">{{ totalStories }}</sup>
+        </button>
+      </nav>
+
+      <div class="tools">
+        <form class="search" :class="{ 'is-open': search.open }" role="search" @submit.prevent="runSearch">
+          <button type="button" class="search__icon" aria-label="Поиск по адресу" @click="openSearch">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
+          </button>
+          <input ref="searchInput" v-model="search.q" type="search" placeholder="Найти улицу или место…"
+                 aria-label="Поиск по адресу" autocomplete="off" @focus="search.open = true" @keydown.esc="closeSearch">
+          <ul v-if="search.open && (search.loading || search.empty || search.results.length)" class="search__results">
+            <li v-if="search.loading" class="search__note">Листаем карту…</li>
+            <li v-else-if="search.empty" class="search__note">Ничего не нашлось. Попробуйте иначе.</li>
+            <li v-for="r in search.results" :key="r.id">
+              <button type="button" @click="pickSearch(r)">
+                <span>{{ r.title }}</span>
+                <small>{{ r.subtitle }}</small>
+              </button>
+            </li>
+          </ul>
+        </form>
+        <button type="button" class="icon-btn" :class="{ 'is-busy': locating }" title="Показать, где я" aria-label="Моё местоположение" @click="locate()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ───────── Рейка категорий (на телефоне — горизонтальные чипы) ───────── -->
+    <nav class="rail" aria-label="Фильтр по категориям">
+      <button type="button" class="rail__item" :class="{ 'is-active': !category }" style="--cat: #f2eadb" @click="category = null">
+        <span class="rail__glyph">✦</span>
+        <span class="rail__label">Все</span>
+        <span class="rail__count">{{ totalStories }}</span>
+      </button>
+      <button v-for="(c, key) in CATS" :key="key" type="button" class="rail__item"
+              :class="{ 'is-active': category === key }" :style="{ '--cat': c.color }"
+              :title="c.label" @click="category = category === key ? null : key">
+        <span class="rail__glyph">{{ c.glyph }}</span>
+        <span class="rail__label">{{ c.plural }}</span>
+        <span class="rail__count">{{ catCounts[key] }}</span>
+      </button>
+      <button type="button" class="rail__add" title="Добавить легенду рядом со мной" aria-label="Добавить легенду рядом" @click="addNearby">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </nav>
+
+    <!-- ───────── Сцена: карта или лента ───────── -->
+    <main class="stage">
+      <section class="map-wrap" v-show="mode === 'map'" aria-label="Карта легенд">
+        <div ref="mapEl" class="map"></div>
+
+        <div class="map-hud" aria-hidden="true">
+          <span class="map-hud__city">{{ CITY.name }}</span>
+          <span class="map-hud__coords">{{ hud.lat }}° N · {{ hud.lng }}° E · z{{ hud.zoom }}</span>
+          <span class="map-hud__me" v-if="geoAccuracy">вы здесь · точность ±{{ geoAccuracy }} м</span>
+        </div>
+
+        <!-- ПК: скрыть/показать правую панель -->
+        <button type="button" class="map-toggle map-toggle--side" :class="{ 'is-off': sideHidden }"
+                :aria-pressed="sideHidden" :title="sideHidden ? 'Показать панель' : 'Скрыть панель'"
+                :aria-label="sideHidden ? 'Показать панель подробностей' : 'Скрыть панель подробностей'" @click="toggleSide">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg>
+        </button>
+        <!-- Телефон: скрыть/показать верхнее меню -->
+        <button type="button" class="map-toggle map-toggle--top" :class="{ 'is-off': topHidden }"
+                :aria-pressed="topHidden" :title="topHidden ? 'Показать меню' : 'Скрыть меню'"
+                :aria-label="topHidden ? 'Показать верхнее меню' : 'Скрыть верхнее меню'" @click="toggleTop">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/></svg>
+        </button>
+
+        <p class="map-hint" v-if="panel !== 'compose'">
+          <i aria-hidden="true">✦</i> Нажмите на любую точку карты, чтобы оставить легенду
+        </p>
+
+        <div class="whispers" v-if="whispers.length">
+          <span class="whispers__label">Шёпот города</span>
+          <div class="whispers__track">
+            <div class="whispers__run">
+              <button v-for="(w, i) in whispersLoop" :key="i" type="button" :tabindex="i < whispers.length ? 0 : -1" @click="showOnMap(w)">
+                <i :style="{ background: catColor(w.category) }"></i>{{ snippet(w.text) }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section ref="feedEl" class="feed" v-show="mode === 'feed'" aria-label="Лента историй">
+        <div class="feed__head">
+          <div>
+            <p class="kicker">Лента шёпотов{{ category ? ' · ' + CATS[category].plural.toLowerCase() : '' }}</p>
+            <h1 class="feed__title">Что рассказывают <em>{{ feedTitle }}</em></h1>
+          </div>
+          <div class="sorter" role="tablist" aria-label="Сортировка">
+            <button v-for="s in SORTS" :key="s.key" type="button" role="tab" :aria-selected="feed.sort === s.key"
+                    :class="{ 'is-active': feed.sort === s.key }" @click="setSort(s.key)">{{ s.label }}</button>
+          </div>
+        </div>
+
+        <div class="feed__grid">
+          <story-card v-for="(s, i) in feed.items" :key="s.id" :story="s" :featured="i === 0" :ribbon="i === 0 ? ribbon : ''"
+                      show-place @vote="vote" @report="report" @locate="showOnMap"></story-card>
+          <template v-if="feed.loading && !feed.items.length">
+            <div v-for="n in 6" :key="'sk' + n" class="skeleton" :class="{ 'skeleton--featured': n === 1 }"></div>
+          </template>
+        </div>
+
+        <div ref="feedEnd" class="feed__end">
+          <span v-if="feed.loading && feed.items.length">Прислушиваемся…</span>
+          <span v-else-if="feed.loaded && !feed.items.length">Здесь пока тихо. Станьте первым, кто расскажет.</span>
+          <span v-else-if="feed.done && feed.items.length">Дальше — тишина. Может, у вас есть своя история?</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- ───────── Боковая панель (на телефоне — выезжающая шторка) ───────── -->
+    <aside class="side" :class="{ 'is-open': sheetOpen }" v-show="mode === 'map'" aria-label="Подробности">
+      <button type="button" class="side__handle" :aria-expanded="sheetOpen" @click="sheetOpen = !sheetOpen">
+        <i aria-hidden="true"></i>
+        <span>{{ handleText }}</span>
+      </button>
+
+      <div class="side__body">
+        <transition name="swap" mode="out-in">
+
+          <!-- Обзор -->
+          <div v-if="panel === 'overview'" key="overview" class="panel">
+            <p class="kicker">Ночной атлас · {{ CITY.name }}</p>
+            <h2 class="display">У каждого двора есть <em>своя тайна</em></h2>
+            <p class="lead">Нажмите на любую точку карты и расскажите, что знаете о ней. Огни горят ярче там, где историям верят больше.</p>
+
+            <dl class="stats">
+              <div><dt>историй</dt><dd>{{ totalStories }}</dd></div>
+              <div><dt>мест</dt><dd>{{ places.length }}</dd></div>
+              <div><dt>чаще всего</dt><dd class="stats__cat" :style="{ color: topCategory.color }">{{ topCategory.glyph }}</dd></div>
+            </dl>
+
+            <h3 class="section-title">Самые яркие огни</h3>
+            <ol class="hot">
+              <li v-for="(p, i) in hotPlaces" :key="p.id">
+                <button type="button" @click="openPlace(p.id)">
+                  <span class="hot__rank">{{ String(i + 1).padStart(2, '0') }}</span>
+                  <span class="hot__orb" :style="{ background: placeRing(p) }"></span>
+                  <span class="hot__name">
+                    {{ p.address || 'Безымянное место' }}
+                    <small>{{ p.stories }} {{ plural(p.stories, STORY_FORMS) }} · {{ signed(p.rating) }}</small>
+                  </span>
+                </button>
+              </li>
+              <li v-if="!hotPlaces.length" class="muted">Карта ещё пуста — зажгите первый огонёк.</li>
+            </ol>
+
+            <h3 class="section-title">Кодекс шёпота</h3>
+            <ol class="code">
+              <li><b>О местах, а не о людях.</b> Двор, подъезд, перекрёсток — да. Соседка с третьего этажа — нет.</li>
+              <li><b>Без имён и контактов.</b> Телефоны, email и ссылки система не пропустит.</li>
+              <li><b>Не веришь — скажи.</b> «Не верю» гасит огонёк, жалоба прячет историю до проверки.</li>
+            </ol>
+
+            <h3 class="section-title">Как читать карту</h3>
+            <ul class="legend">
+              <li v-for="(c, key) in CATS" :key="key">
+                <i :style="{ background: c.color }"></i>
+                <b>{{ c.label }}</b>
+                <span>{{ c.hint }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Точка -->
+          <div v-else-if="panel === 'place'" :key="'place' + (current ? current.place.id : '')" class="panel">
+            <button type="button" class="back" @click="closePanel">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Все огни
+            </button>
+
+            <template v-if="current">
+              <p class="kicker">{{ current.stories.length }} {{ plural(current.stories.length, STORY_FORMS) }} · рейтинг {{ signed(placeRating) }}</p>
+              <h2 class="display display--sm">{{ current.place.address || 'Безымянное место' }}</h2>
+              <p class="coords">{{ fmtCoords(current.place) }}</p>
+              <div class="mixbar" v-if="placeMix.length">
+                <span v-for="seg in placeMix" :key="seg.key" :style="{ flexGrow: seg.n, background: seg.color }" :title="seg.label + ': ' + seg.n"></span>
+              </div>
+              <div class="stack">
+                <story-card v-for="s in current.stories" :key="s.id" :story="s" compact @vote="vote" @report="report"></story-card>
+                <p v-if="!current.stories.length" class="muted">Истории этой точки сейчас на модерации.</p>
+              </div>
+              <button type="button" class="cta" @click="startCompose({ place: current.place })">Добавить свою версию</button>
+            </template>
+            <div v-else class="loader" aria-label="Загрузка"><i></i><i></i><i></i></div>
+          </div>
+
+          <!-- Новая история -->
+          <form v-else key="compose" class="panel composer" @submit.prevent="submitDraft" novalidate>
+            <button type="button" class="back" @click="cancelDraft()">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Отмена
+            </button>
+
+            <p class="kicker">Новая легенда</p>
+            <h2 class="display display--sm">{{ draft.geocoding ? 'Определяем адрес…' : (draft.address || 'Точка без адреса') }}</h2>
+            <p class="coords">{{ fmtCoords(draft) }}<span v-if="!draft.place_id"> · метку можно перетащить</span></p>
+
+            <label class="field">
+              <span class="field__label">Что говорят об этом месте?</span>
+              <textarea ref="draftText" v-model="draft.text" :maxlength="TEXT_MAX" rows="7"
+                        placeholder="Говорят, что в этом дворе…"></textarea>
+              <span class="meter" :class="{ 'is-ok': draftOk }"><i :style="{ width: draftFill }"></i></span>
+              <span class="field__hint">
+                <span :class="{ 'is-warn': !draftOk }">{{ draftHint }}</span>
+                <span>{{ draftLen }} / {{ TEXT_MAX }}</span>
+              </span>
+            </label>
+
+            <fieldset class="chips">
+              <legend>Категория <small>— по желанию</small></legend>
+              <button v-for="(c, key) in CATS" :key="key" type="button" class="chip"
+                      :class="{ 'is-on': draft.category === key }" :style="{ '--cat': c.color }"
+                      :aria-pressed="draft.category === key" @click="draft.category = draft.category === key ? null : key">
+                <b>{{ c.glyph }}</b> {{ c.label }}
+              </button>
+            </fieldset>
+
+            <p class="rule" v-if="!draftIssue">
+              <b>✦</b> Пишите о месте, а не о соседях: без имён, телефонов и номеров квартир. Такие истории быстро скрывают по жалобам.
+            </p>
+            <p class="error" v-if="draft.error || draftIssue" role="alert">{{ draftIssue || draft.error }}</p>
+
+            <button class="cta" type="submit" :disabled="draft.sending">
+              {{ draft.sending ? 'Записываем…' : 'Опубликовать анонимно' }}
+            </button>
+            <p class="fineprint">Без регистрации и email · одна история раз в 5 минут</p>
+          </form>
+
+        </transition>
+      </div>
+    </aside>
+  </div>
+
+  <button type="button" class="fab" v-show="!sheetOpen" aria-label="Добавить легенду рядом" @click="addNearby">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+
+  <div class="toasts" aria-live="polite">
+    <transition-group name="toast">
+      <div v-for="t in toasts" :key="t.id" class="toast" :class="'toast--' + t.kind">{{ t.text }}</div>
+    </transition-group>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/vue@3.5.13/dist/vue.global.prod.js"></script>
+<script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
