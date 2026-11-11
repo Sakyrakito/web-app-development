@@ -3,3 +3,4 @@ storage/*.sqlite*
 Dockerfile
 compose.yaml
 .dockerignore
+.env

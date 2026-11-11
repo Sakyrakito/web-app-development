@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Модерация — Городские легенды</title>
+  <meta name="theme-color" content="#0d0c13">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+<div id="admin" class="adm" v-cloak>
+  <header class="adm-top">
+    <a class="adm-back" href="./">← На карту</a>
+    <h1>Модерация</h1>
+    <button v-if="auth.admin" type="button" class="adm-btn adm-btn--ghost" @click="logout">Выйти</button>
+  </header>
+
+  <p v-if="!auth.checked" class="adm-note" role="status">{{ bootError || 'Загрузка…' }}</p>
+
+  <section v-else-if="!auth.configured" class="adm-card adm-narrow">
+    <h2>Вход отключён</h2>
+    <p>Задайте переменные окружения <code>ADMIN_LOGIN</code> и <code>ADMIN_PASSWORD_HASH</code>
+      (пример — в <code>.env.example</code>) и перезапустите сервер.</p>
+  </section>
+
+  <form v-else-if="!auth.admin" class="adm-card adm-narrow adm-login" @submit.prevent="login">
+    <h2>Вход для администратора</h2>
+    <label>Логин <input v-model="loginForm.login" autocomplete="username" required></label>
+    <label>Пароль <input v-model="loginForm.password" type="password" autocomplete="current-password" required></label>
+    <p v-if="loginForm.error" class="adm-error" role="alert">{{ loginForm.error }}</p>
+    <button class="adm-btn" :disabled="loginForm.busy">Войти</button>
+  </form>
+
+  <main v-else class="adm-main">
+    <form class="adm-card adm-settings" @submit.prevent="saveThreshold">
+      <label for="threshold">Жалоб до автоскрытия</label>
+      <input id="threshold" type="number" min="1" max="1000" v-model.number="threshold.value" required>
+      <button class="adm-btn" :disabled="threshold.busy || threshold.value === threshold.saved">Сохранить</button>
+      <span class="adm-note" role="status">{{ threshold.message }}</span>
+    </form>
+
+    <nav class="adm-tabs" aria-label="Списки историй">
+      <button type="button" :class="{ 'is-active': tab === 'hidden' }" :aria-pressed="tab === 'hidden'" @click="tab = 'hidden'">
+        Скрытые <b>{{ list.hiddenTotal }}</b>
+      </button>
+      <button type="button" :class="{ 'is-active': tab === 'all' }" :aria-pressed="tab === 'all'" @click="tab = 'all'">
+        Все истории
+      </button>
+      <input type="search" v-model="query" placeholder="Поиск по тексту или адресу" aria-label="Поиск по тексту или адресу">
+    </nav>
+
+    <p v-if="list.error" class="adm-error" role="alert">{{ list.error }}</p>
+    <p v-if="!list.loading && !list.items.length" class="adm-empty">
+      {{ query.trim() ? 'Ничего не найдено.' : tab === 'hidden' ? 'Очередь пуста: скрытых историй нет.' : 'Историй пока нет.' }}
+    </p>
+
+    <article v-for="s in list.items" :key="s.id" class="adm-card adm-story" :class="{ 'is-hidden': s.hidden }">
+      <header class="adm-meta">
+        <span class="adm-cat" :style="{ '--c': catColor(s.category) }">{{ catLabel(s.category) }}</span>
+        <span>#{{ s.id }}</span>
+        <time :datetime="s.created_at">{{ fmtDate(s.created_at) }}</time>
+        <span>{{ s.place.address || fmtCoords(s.place) }}</span>
+      </header>
+      <p class="adm-text">{{ s.text }}</p>
+      <footer class="adm-actions">
+        <span class="adm-stat" :class="{ 'is-bad': s.reports }">{{ s.reports }} {{ plural(s.reports, ['жалоба', 'жалобы', 'жалоб']) }}</span>
+        <span class="adm-stat">рейтинг {{ signed(s.rating) }}</span>
+        <span v-if="s.hidden" class="adm-badge">скрыта</span>
+        <span class="adm-spacer"></span>
+        <button v-if="s.hidden" type="button" class="adm-btn adm-btn--ok" :disabled="busyId === s.id" @click="act(s, 'restore')">Восстановить</button>
+        <button v-else type="button" class="adm-btn adm-btn--ghost" :disabled="busyId === s.id" @click="act(s, 'hide')">Скрыть</button>
+        <button type="button" class="adm-btn adm-btn--danger" :disabled="busyId === s.id" @click="act(s, 'delete')">
+          {{ armed === s.id ? 'Точно удалить?' : 'Удалить навсегда' }}
+        </button>
+      </footer>
+    </article>
+
+    <button v-if="list.hasMore" type="button" class="adm-btn adm-btn--ghost adm-more" :disabled="list.loading" @click="loadList(false)">
+      Показать ещё
+    </button>
+  </main>
+</div>
+
+<script src="https://unpkg.com/vue@3.5.13/dist/vue.global.prod.js"></script>
+<script type="module" src="assets/js/admin.js"></script>
+</body>
+</html>

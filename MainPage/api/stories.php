@@ -7,7 +7,7 @@ declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
 
 $method = require_method('GET', 'POST');
-$pdo    = db();
+$db    = db();
 
 if ($method === 'GET') {
     $sort     = $_GET['sort'] ?? 'new';
@@ -20,8 +20,8 @@ if ($method === 'GET') {
     $params = [':me' => ACTOR];
     $sql    = STORY_SELECT;
     if ($category) {
-        $sql .= ' AND s.category = :cat';
-        $params[':cat'] = $category;
+        $sql .= ' AND s.category = :category';
+        $params[':category'] = $category;
     }
 
     switch ($sort) {
@@ -50,8 +50,8 @@ if ($method === 'GET') {
     }
     $sql .= " LIMIT $limit OFFSET $offset";
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
+    $feedQuery = $db->prepare($sql);
+    $feedQuery->execute($params);
 
     $items = array_map(static function (array $row) use ($lat, $lng) {
         $story = story_out($row);
@@ -59,19 +59,19 @@ if ($method === 'GET') {
             $story['distance'] = (int) round(distance_m($lat, $lng, $story['place']['lat'], $story['place']['lng']));
         }
         return $story;
-    }, $stmt->fetchAll());
+    }, $feedQuery->fetchAll());
 
     json_out(['items' => $items, 'has_more' => count($items) === $limit]);
 }
 
 // --- POST: publish ---
-$in       = body();
-$text     = trim((string) ($in['text'] ?? ''));
-$category = category_param($in);
-$lat      = float_param($in, 'lat', -90, 90);
-$lng      = float_param($in, 'lng', -180, 180);
-$placeId  = int_param($in, 'place_id');
-$address  = mb_substr(trim(strip_tags((string) ($in['address'] ?? ''))), 0, 200) ?: null;
+$input       = body();
+$text     = trim((string) ($input['text'] ?? ''));
+$category = category_param($input);
+$lat      = float_param($input, 'lat', -90, 90);
+$lng      = float_param($input, 'lng', -180, 180);
+$placeId  = int_param($input, 'place_id');
+$address  = mb_substr(trim(strip_tags((string) ($input['address'] ?? ''))), 0, 200) ?: null;
 
 $len = mb_strlen($text);
 if ($len < TEXT_MIN) {
@@ -92,54 +92,65 @@ if (preg_match('~https?://|www\.~iu', $text)) {
     fail('Ссылки в историях не публикуются');
 }
 
-$stmt = $pdo->prepare("SELECT CAST(strftime('%s', 'now') - strftime('%s', MAX(created_at)) AS INTEGER)
-                         FROM stories WHERE author = ?");
-$stmt->execute([ACTOR]);
-$since = $stmt->fetchColumn();
-if ($since !== null && (int) $since < POST_COOLDOWN) {
-    fail('Подождите перед следующей публикацией', 429, ['retry_after' => POST_COOLDOWN - (int) $since]);
+$lastPostQuery = $db->prepare(
+    "SELECT CAST(strftime('%s', 'now') - strftime('%s', MAX(created_at)) AS INTEGER)
+       FROM stories WHERE author = ?"
+);
+$lastPostQuery->execute([ACTOR]);
+$secondsSinceLastPost = $lastPostQuery->fetchColumn();
+if ($secondsSinceLastPost !== null && (int) $secondsSinceLastPost < POST_COOLDOWN) {
+    fail('Подождите перед следующей публикацией', 429, ['retry_after' => POST_COOLDOWN - (int) $secondsSinceLastPost]);
 }
 
-$pdo->beginTransaction();
+$db->beginTransaction();
 
 if ($placeId !== null) {
-    $stmt = $pdo->prepare('SELECT id FROM places WHERE id = ?');
-    $stmt->execute([$placeId]);
-    if (!$stmt->fetchColumn()) {
-        $pdo->rollBack();
+    $placeQuery = $db->prepare('SELECT id FROM places WHERE id = ?');
+    $placeQuery->execute([$placeId]);
+    if (!$placeQuery->fetchColumn()) {
+        $db->rollBack();
         fail('Точка не найдена', 404);
     }
 } else {
     if ($lat === null || $lng === null) {
-        $pdo->rollBack();
+        $db->rollBack();
         fail('Не указаны координаты');
     }
     // Reuse a nearby place so stories about the same courtyard share one marker.
-    $dLat = SNAP_METERS / 111320;
-    $dLng = $dLat / max(0.01, cos(deg2rad($lat)));
-    $stmt = $pdo->prepare('SELECT id, lat, lng FROM places
-                            WHERE lat BETWEEN :lat1 AND :lat2 AND lng BETWEEN :lng1 AND :lng2');
-    $stmt->execute([':lat1' => $lat - $dLat, ':lat2' => $lat + $dLat, ':lng1' => $lng - $dLng, ':lng2' => $lng + $dLng]);
+    $latMargin = SNAP_METERS / 111320;   // metres per degree of latitude
+    $lngMargin = $latMargin / max(0.01, cos(deg2rad($lat)));
+    $nearbyQuery = $db->prepare(
+        'SELECT id, lat, lng FROM places
+          WHERE lat BETWEEN :lat_min AND :lat_max AND lng BETWEEN :lng_min AND :lng_max'
+    );
+    $nearbyQuery->execute([
+        ':lat_min' => $lat - $latMargin,
+        ':lat_max' => $lat + $latMargin,
+        ':lng_min' => $lng - $lngMargin,
+        ':lng_max' => $lng + $lngMargin,
+    ]);
 
-    $best = null;
-    foreach ($stmt->fetchAll() as $p) {
-        $d = distance_m($lat, $lng, (float) $p['lat'], (float) $p['lng']);
-        if ($d <= SNAP_METERS && ($best === null || $d < $best[1])) {
-            $best = [(int) $p['id'], $d];
+    $nearestId = null;
+    $nearestDistance = SNAP_METERS;
+    foreach ($nearbyQuery->fetchAll() as $place) {
+        $distance = distance_m($lat, $lng, (float) $place['lat'], (float) $place['lng']);
+        if ($distance <= $nearestDistance) {
+            $nearestId = (int) $place['id'];
+            $nearestDistance = $distance;
         }
     }
 
-    if ($best) {
-        $placeId = $best[0];
+    if ($nearestId !== null) {
+        $placeId = $nearestId;
     } else {
-        $pdo->prepare('INSERT INTO places (lat, lng, address) VALUES (?, ?, ?)')->execute([$lat, $lng, $address]);
-        $placeId = (int) $pdo->lastInsertId();
+        $db->prepare('INSERT INTO places (lat, lng, address) VALUES (?, ?, ?)')->execute([$lat, $lng, $address]);
+        $placeId = (int) $db->lastInsertId();
     }
 }
 
-$pdo->prepare('INSERT INTO stories (place_id, text, category, author) VALUES (?, ?, ?, ?)')
+$db->prepare('INSERT INTO stories (place_id, text, category, author) VALUES (?, ?, ?, ?)')
     ->execute([$placeId, $text, $category, ACTOR]);
-$storyId = (int) $pdo->lastInsertId();
-$pdo->commit();
+$storyId = (int) $db->lastInsertId();
+$db->commit();
 
 json_out(find_story($storyId), 201);

@@ -7,17 +7,17 @@ declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
 
 require_method('POST');
-$in      = body();
-$storyId = int_param($in, 'story_id') ?? fail('Не указана история');
-$value   = int_param($in, 'value');
+$input      = body();
+$storyId = int_param($input, 'story_id') ?? fail('Не указана история');
+$value   = int_param($input, 'value');
 if ($value !== 1 && $value !== -1) {
     fail('value должен быть 1 или -1');
 }
 
-$pdo  = db();
-$stmt = $pdo->prepare('SELECT author FROM stories WHERE id = ? AND hidden = 0');
-$stmt->execute([$storyId]);
-$author = $stmt->fetchColumn();
+$db  = db();
+$authorQuery = $db->prepare('SELECT author FROM stories WHERE id = ? AND hidden = 0');
+$authorQuery->execute([$storyId]);
+$author = $authorQuery->fetchColumn();
 if ($author === false) {
     fail('История не найдена', 404);
 }
@@ -25,29 +25,29 @@ if ($author === ACTOR) {
     fail('Нельзя голосовать за собственную историю', 403);
 }
 
-$pdo->beginTransaction();
+$db->beginTransaction();
 
-$stmt = $pdo->prepare('SELECT value FROM votes WHERE story_id = ? AND actor = ?');
-$stmt->execute([$storyId, ACTOR]);
-$old = (int) ($stmt->fetchColumn() ?: 0);
-$new = $old === $value ? 0 : $value;
+$voteQuery = $db->prepare('SELECT value FROM votes WHERE story_id = ? AND actor = ?');
+$voteQuery->execute([$storyId, ACTOR]);
+$previousVote = (int) ($voteQuery->fetchColumn() ?: 0);
+$newVote = $previousVote === $value ? 0 : $value;
 
-if ($new === 0) {
-    $pdo->prepare('DELETE FROM votes WHERE story_id = ? AND actor = ?')->execute([$storyId, ACTOR]);
+if ($newVote === 0) {
+    $db->prepare('DELETE FROM votes WHERE story_id = ? AND actor = ?')->execute([$storyId, ACTOR]);
 } else {
-    $pdo->prepare('INSERT INTO votes (story_id, actor, value) VALUES (?, ?, ?)
+    $db->prepare('INSERT INTO votes (story_id, actor, value) VALUES (?, ?, ?)
                    ON CONFLICT (story_id, actor) DO UPDATE SET value = excluded.value')
-        ->execute([$storyId, ACTOR, $new]);
+        ->execute([$storyId, ACTOR, $newVote]);
 }
 
 // Apply deltas instead of recounting so the seed data's initial counts are preserved.
-$pdo->prepare('UPDATE stories SET likes = likes + :dl, dislikes = dislikes + :dd WHERE id = :id')
+$db->prepare('UPDATE stories SET likes = likes + :likes_delta, dislikes = dislikes + :dislikes_delta WHERE id = :id')
     ->execute([
-        ':dl' => (int) ($new === 1) - (int) ($old === 1),
-        ':dd' => (int) ($new === -1) - (int) ($old === -1),
-        ':id' => $storyId,
+        ':likes_delta'    => (int) ($newVote === 1) - (int) ($previousVote === 1),
+        ':dislikes_delta' => (int) ($newVote === -1) - (int) ($previousVote === -1),
+        ':id'             => $storyId,
     ]);
-$pdo->commit();
+$db->commit();
 
 $story = find_story($storyId);
 json_out([

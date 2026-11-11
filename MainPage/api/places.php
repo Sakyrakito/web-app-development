@@ -7,19 +7,19 @@ declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
 
 require_method('GET');
-$pdo = db();
+$db = db();
 
 $id = int_param($_GET, 'id');
 if ($id !== null) {
-    $stmt = $pdo->prepare('SELECT id, lat, lng, address FROM places WHERE id = ?');
-    $stmt->execute([$id]);
-    $place = $stmt->fetch();
+    $placeQuery = $db->prepare('SELECT id, lat, lng, address FROM places WHERE id = ?');
+    $placeQuery->execute([$id]);
+    $place = $placeQuery->fetch();
     if (!$place) {
         fail('Точка не найдена', 404);
     }
 
-    $stmt = $pdo->prepare(STORY_SELECT . ' AND s.place_id = :pid ORDER BY rating DESC, s.created_at DESC');
-    $stmt->execute([':me' => ACTOR, ':pid' => $id]);
+    $storiesQuery = $db->prepare(STORY_SELECT . ' AND s.place_id = :place_id ORDER BY rating DESC, s.created_at DESC');
+    $storiesQuery->execute([':me' => ACTOR, ':place_id' => $id]);
 
     json_out([
         'place' => [
@@ -28,7 +28,7 @@ if ($id !== null) {
             'lng'     => (float) $place['lng'],
             'address' => $place['address'],
         ],
-        'stories' => array_map('story_out', $stmt->fetchAll()),
+        'stories' => array_map('story_out', $storiesQuery->fetchAll()),
     ]);
 }
 
@@ -43,24 +43,24 @@ $sql = "SELECT p.id, p.lat, p.lng, p.address,
                MAX(s.created_at)               AS last_at
           FROM places p
           JOIN stories s ON s.place_id = p.id AND s.hidden = 0"
-     . ($category ? ' AND s.category = :cat' : '')
+     . ($category ? ' AND s.category = :category' : '')
      . ' GROUP BY p.id ORDER BY rating DESC LIMIT 2000';
 
-$stmt = $pdo->prepare($sql);
-$stmt->execute($category ? [':cat' => $category] : []);
+$placesQuery = $db->prepare($sql);
+$placesQuery->execute($category ? [':category' => $category] : []);
 
-json_out(array_map(static fn(array $r) => [
-    'id'      => (int) $r['id'],
-    'lat'     => (float) $r['lat'],
-    'lng'     => (float) $r['lng'],
-    'address' => $r['address'],
-    'stories' => (int) $r['stories'],
-    'rating'  => (int) $r['rating'],
+json_out(array_map(static fn(array $row) => [
+    'id'      => (int) $row['id'],
+    'lat'     => (float) $row['lat'],
+    'lng'     => (float) $row['lng'],
+    'address' => $row['address'],
+    'stories' => (int) $row['stories'],
+    'rating'  => (int) $row['rating'],
     'mix'     => [
-        'rumor'   => (int) $r['rumor'],
-        'horror'  => (int) $r['horror'],
-        'history' => (int) $r['history'],
-        'omen'    => (int) $r['omen'],
+        'rumor'   => (int) $row['rumor'],
+        'horror'  => (int) $row['horror'],
+        'history' => (int) $row['history'],
+        'omen'    => (int) $row['omen'],
     ],
-    'last_at' => $r['last_at'],
-], $stmt->fetchAll()));
+    'last_at' => $row['last_at'],
+], $placesQuery->fetchAll()));
