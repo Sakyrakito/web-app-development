@@ -4,7 +4,7 @@
  */
 import { CITY } from './constants.js';
 import { store } from './services.js';
-import { mixSegments, conic, dominantColor } from './helpers.js';
+import { mixSegments, conic, dominantColor, plural } from './helpers.js';
 
 let map = null, markersLayer = null, draftMarker = null, meMarker = null, meCircle = null;
 const markers = new Map();
@@ -25,7 +25,12 @@ export function initMap(el, { onClick, onMove }) {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
   L.control.zoom({ position: 'bottomright', zoomInTitle: 'Приблизить', zoomOutTitle: 'Отдалить' }).addTo(map);
-  markersLayer = L.layerGroup().addTo(map);
+  markersLayer = L.markerClusterGroup({
+    // Orbs are 30–84 px wide, so this merges roughly the ones that would overlap.
+    maxClusterRadius: 60,
+    showCoverageOnHover: false,
+    iconCreateFunction: clusterIcon,
+  }).addTo(map);
 
   // The container resizes when v-cloak is removed and on mode/layout changes, and Leaflet must be told.
   new ResizeObserver(() => map.invalidateSize()).observe(el);
@@ -64,35 +69,70 @@ export function flyToCity() {
 
 // ── Place markers ──
 
-export function renderMarkers(places, { category, selectedId, onSelect }) {
+let selectedId = null;
+
+/** One orb for a place or a whole cluster: ring = category shares, size grows with rating and story count. */
+function orbIcon({ mix, stories, rating, count, phase, selected, cluster, title }) {
+  const size = Math.round(Math.min(84, 30 + Math.sqrt(Math.max(0, rating) + count * 4) * 4.2));
+  const segs = mixSegments(mix, stories);
+  const cls = ['orb', cluster && 'orb--cluster', rating >= 40 && 'orb--hot', selected && 'is-selected'].filter(Boolean).join(' ');
+  const style = `--s:${size}px;--ring:${conic(segs)};--glow:${dominantColor(segs)};--d:${((phase * 0.73) % 3).toFixed(2)}s`;
+  return L.divIcon({
+    className: 'orb-icon',
+    iconSize: [size, size],
+    html: `<div class="${cls}" style="${style}"${title ? ` title="${title}"` : ''}><b>${count}</b></div>`,
+  });
+}
+
+function clusterIcon(cluster) {
+  const children = cluster.getAllChildMarkers().map(m => m.options.place);
+  const mix = {};
+  let stories = 0, rating = 0, count = 0;
+  for (const { p, count: n } of children) {
+    for (const [k, v] of Object.entries(p.mix)) mix[k] = (mix[k] || 0) + v;
+    stories += p.stories;
+    rating += p.rating;
+    count += n;
+  }
+  return orbIcon({
+    mix, stories, rating, count,
+    phase: children[0].p.id,
+    selected: children.some(c => c.p.id === selectedId),
+    cluster: true,
+    title: `${children.length} ${plural(children.length, ['точка', 'точки', 'точек'])} рядом`,
+  });
+}
+
+export function renderMarkers(places, { category, selectedId: selected, onSelect }) {
   if (!map) return;
+  selectedId = selected;
   markersLayer.clearLayers();
   markers.clear();
 
-  for (const p of places) {
+  const batch = places.map(p => {
     const count = category ? p.mix[category] : p.stories;
-    const size = Math.round(Math.min(84, 30 + Math.sqrt(Math.max(0, p.rating) + count * 4) * 4.2));
-    const segs = mixSegments(p.mix, p.stories);
-    const cls = ['orb', p.rating >= 40 && 'orb--hot', p.id === selectedId && 'is-selected'].filter(Boolean).join(' ');
-    const style = `--s:${size}px;--ring:${conic(segs)};--glow:${dominantColor(segs)};--d:${((p.id * 0.73) % 3).toFixed(2)}s`;
-
+    const icon = orbIcon({ mix: p.mix, stories: p.stories, rating: p.rating, count, phase: p.id, selected: p.id === selected });
     const marker = L.marker([p.lat, p.lng], {
-      icon: L.divIcon({ className: 'orb-icon', iconSize: [size, size], html: `<div class="${cls}" style="${style}"><b>${count}</b></div>` }),
+      icon,
       title: p.address || 'Точка с историями',
       riseOnHover: true,
-      zIndexOffset: p.id === selectedId ? 1000 : Math.round(size),
+      zIndexOffset: p.id === selected ? 1000 : icon.options.iconSize[0],
+      place: { p, count },
     }).on('click', () => onSelect(p.id));
-
-    marker.addTo(markersLayer);
     markers.set(p.id, marker);
-  }
+    return marker;
+  });
+  markersLayer.addLayers(batch);
 }
 
 export function setSelected(id) {
+  selectedId = id;
   for (const [pid, m] of markers) {
     m.getElement()?.querySelector('.orb')?.classList.toggle('is-selected', pid === id);
-    m.setZIndexOffset(pid === id ? 1000 : 0);
+    m.setZIndexOffset(pid === id ? 1000 : m.options.icon.options.iconSize[0]);
   }
+  // A selected place hidden inside a cluster marks the cluster instead.
+  markersLayer.refreshClusters();
 }
 
 // ── Draft marker ──

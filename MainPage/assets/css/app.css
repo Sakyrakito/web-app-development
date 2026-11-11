@@ -628,6 +628,12 @@ svg {
   color: var(--paper);
   text-shadow: 0 1px 6px rgba(0, 0, 0, .9);
 }
+.orb--cluster {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, .45),
+    0 0 0 5px color-mix(in srgb, var(--glow) 22%, transparent),
+    0 0 calc(var(--s) * .55) color-mix(in srgb, var(--glow) 55%, transparent);
+}
 .orb:hover { transform: scale(1.15); }
 .orb.is-selected { transform: scale(1.2); }
 .orb.is-selected::after {
