@@ -1,5 +1,6 @@
 -- "Urban Legends" SQLite schema.
--- Applied automatically on the first API request (see bootstrap.php).
+-- Applied on the first API request and re-run whenever SCHEMA_VERSION in core.php is bumped,
+-- so every statement here must be safe to run against an existing database.
 
 PRAGMA foreign_keys = ON;
 
@@ -48,3 +49,10 @@ CREATE TABLE IF NOT EXISTS settings (
     value TEXT NOT NULL
 );
 INSERT OR IGNORE INTO settings (key, value) VALUES ('report_threshold', '5');
+
+-- Failed admin logins, for the per-IP lockout in api/admin-session.php.
+CREATE TABLE IF NOT EXISTS login_failures (
+    ip TEXT    NOT NULL,
+    at INTEGER NOT NULL                   -- unix time
+);
+CREATE INDEX IF NOT EXISTS idx_login_failures ON login_failures(ip, at);

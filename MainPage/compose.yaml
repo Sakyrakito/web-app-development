@@ -5,6 +5,12 @@ services:
       - "8000:8000"
     volumes:
       - legends-data:/app/storage
+      - legends-sessions:/var/lib/php/sessions
+    # Admin credentials (see .env.example); without them the admin panel stays disabled.
+    env_file:
+      - path: .env
+        required: false
 
 volumes:
   legends-data:
+  legends-sessions:
