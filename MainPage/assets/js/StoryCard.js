@@ -1,4 +1,4 @@
-/** Карточка истории: текст, голосование, жалоба в два касания. */
+/** Story card: text, voting, two-tap report. */
 import { CATS, NONE } from './constants.js';
 import { timeAgo, fmtDate, fmtDistance } from './helpers.js';
 
@@ -22,7 +22,7 @@ export const StoryCard = {
     const cat = computed(() => CATS[props.story.category] || NONE);
     const isLong = computed(() => props.story.text.length > (props.featured ? 560 : props.compact ? 240 : 300));
 
-    // Жалоба в два касания: первое — «Точно?», второе — отправка.
+    // Two-tap report: the first tap asks "Sure?", the second sends it.
     function askReport() {
       if (props.story.reported) return;
       clearTimeout(confirmTimer);

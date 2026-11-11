@@ -1,6 +1,6 @@
 /**
- * Общее состояние приложения: реактивные данные, вычисляемые значения, уведомления.
- * Приложение одно на странице, поэтому состояние живёт на уровне модуля.
+ * Shared app state: reactive data, computed values, toasts.
+ * There's one app per page, so state lives at module level.
  */
 import {
   CATS, NONE, FEED_TITLES, RIBBONS, STORY_FORMS, CONTACT_RULES, TEXT_MIN, TEXT_MAX,
@@ -10,22 +10,22 @@ import { plural, textLength, mixSegments } from './helpers.js';
 
 const { createApp, ref, reactive, computed, watch, onMounted, nextTick } = Vue;
 
-// ───────────────────────── Данные ─────────────────────────
+// ───────────────────────── Data ─────────────────────────
 
-export const mode        = ref('map');       // map | feed; при входе всегда карта
+export const mode        = ref('map');       // map | feed; always starts on the map
 export const category    = ref(null);
 export const places      = ref([]);
 export const panel       = ref('overview');  // overview | place | compose
 export const current     = ref(null);        // { place, stories }
-export const sheetOpen   = ref(false);       // шторка на телефоне
+export const sheetOpen   = ref(false);       // mobile bottom sheet
 export const locating    = ref(false);
-export const userPos     = ref(null);        // { lat, lng } — уходит в API сортировки «рядом»
-export const geoAccuracy = ref(0);           // радиус круга точности в метрах
-export const lastGeoError = ref('');         // причина последней неудачи геолокации
+export const userPos     = ref(null);        // { lat, lng }, sent to the API for "near" sorting
+export const geoAccuracy = ref(0);           // accuracy circle radius in metres
+export const lastGeoError = ref('');         // reason for the last geolocation failure
 export const whispers    = ref([]);
 export const toasts      = ref([]);
-export const sideHidden  = ref(store.get('sideHidden', false));  // ПК: правая панель скрыта
-export const topHidden   = ref(store.get('topHidden', false));   // телефон: верхнее меню скрыто
+export const sideHidden  = ref(store.get('sideHidden', false));  // desktop: right panel hidden
+export const topHidden   = ref(store.get('topHidden', false));   // mobile: top menu hidden
 
 export const hud    = reactive({ lat: '', lng: '', zoom: 0 });
 export const search = reactive({ q: '', results: [], loading: false, empty: false, open: false });
@@ -37,20 +37,20 @@ export const draft  = reactive({
 const savedSort = store.get('feedSort', 'new');
 export const feed = reactive({
   items: [], offset: 0, done: false, loading: false, loaded: false,
-  sort: savedSort === 'near' ? 'new' : savedSort,   // «рядом» без геопозиции не откроется
+  sort: savedSort === 'near' ? 'new' : savedSort,   // "near" can't be restored without a position
 });
 
-// Ссылки на DOM-элементы шаблона (ref="..." в index.html)
+// Template DOM refs (ref="..." in index.html)
 export const mapEl       = ref(null);
 export const feedEl      = ref(null);
 export const feedEnd     = ref(null);
 export const draftText   = ref(null);
 export const searchInput = ref(null);
 
-/** Счётчики запросов: устаревший ответ сравнивает свой токен с текущим и отбрасывается. */
+/** Request counters: a stale response compares its token with the current one and is dropped. */
 export const tokens = { place: 0, feed: 0, geo: 0 };
 
-// ───────────────────────── Вычисляемые значения ─────────────────────────
+// ───────────────────────── Computed values ─────────────────────────
 
 export const totalStories = computed(() => places.value.reduce((a, p) => a + p.stories, 0));
 
@@ -99,7 +99,7 @@ export const feedTitle    = computed(() => FEED_TITLES[feed.sort]);
 export const ribbon       = computed(() => RIBBONS[feed.sort]);
 export const whispersLoop = computed(() => [...whispers.value, ...whispers.value]);
 
-// ───────────────────────── Уведомления ─────────────────────────
+// ───────────────────────── Toasts ─────────────────────────
 
 export function toast(text, kind = 'info') {
   const id = Date.now() + Math.random();

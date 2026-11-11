@@ -1,4 +1,4 @@
-/** Константы приложения: город, категории, лимиты, настройки геолокации. */
+/** App constants: city, categories, limits, geolocation settings. */
 
 export const CITY = { name: 'Гродно', center: [53.6779, 23.8293], zoom: 15 };
 
@@ -19,7 +19,7 @@ export const SORTS = [
 export const FEED_TITLES = { new: 'прямо сейчас', hot: 'громче всего', top: 'чаще всего', near: 'рядом с вами' };
 export const RIBBONS     = { new: 'Только что', hot: 'Все шепчутся', top: 'Ярче всех', near: 'Ближе всех' };
 
-// Те же правила, что в api/stories.php: сплетни — о местах, не о людях.
+// Same rules as api/stories.php: gossip is about places, not people.
 export const CONTACT_RULES = [
   [/(?<!\d)(?:\+?\d[\s\-()]{0,2}){7,}(?!\d)/u, 'Похоже на номер телефона — уберите его: легенды о местах, а не о конкретных людях.'],
   [/[\w.+-]+@[\w-]+\.[a-z]{2,}/iu, 'Похоже на email — уберите его: легенды о местах, а не о конкретных людях.'],
@@ -32,6 +32,6 @@ export const TEXT_MAX = 2000;
 export const FEED_PAGE = 18;
 export const MOBILE_BREAKPOINT = '(max-width: 860px)';
 
-// Порядок как в Google Maps: сначала быстрый черновой замер, затем уточнение.
+// Same order as Google Maps: a quick coarse fix first, then refinement.
 export const GEO_FINE   = { enableHighAccuracy: true,  timeout: 12000, maximumAge: 15000 };
 export const GEO_COARSE = { enableHighAccuracy: false, timeout: 6000,  maximumAge: 300000 };

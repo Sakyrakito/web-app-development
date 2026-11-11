@@ -1,4 +1,4 @@
-/** Поиск мест по адресу (Nominatim). */
+/** Place search by address (Nominatim). */
 import { mode, search, searchInput, toast } from './state.js';
 import { getBounds, invalidateSize } from './map.js';
 import { searchPlaces } from './services.js';

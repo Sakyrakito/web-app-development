@@ -1,4 +1,4 @@
-/** Истории: лента с подгрузкой, сортировка, голосование и жалобы. */
+/** Stories: infinite feed, sorting, voting and reports. */
 import { mode, category, feed, userPos, feedEl, feedEnd, current, whispers, tokens, toast } from './state.js';
 import { FEED_PAGE } from './constants.js';
 import { api, store } from './services.js';
@@ -7,7 +7,7 @@ import { loadPlaces, schedulePlacesRefresh } from './places.js';
 
 const { nextTick } = Vue;
 
-// ───────────────────────── Лента ─────────────────────────
+// ───────────────────────── Feed ─────────────────────────
 
 let observer = null;
 
@@ -35,7 +35,7 @@ export async function loadFeed(reset = false) {
     if (token === tokens.feed) {
       feed.loading = false;
       feed.loaded = true;
-      // Если после подгрузки «хвост» ленты всё ещё на экране — наблюдатель сработает снова.
+      // If the end of the feed is still on screen after loading, the observer fires again.
       nextTick(() => {
         if (observer && feedEnd.value) { observer.unobserve(feedEnd.value); observer.observe(feedEnd.value); }
       });
@@ -51,7 +51,7 @@ export async function setSort(key) {
   loadFeed(true);
 }
 
-/** Вызывать после монтирования, когда feedEl и feedEnd уже привязаны к DOM. */
+/** Call after mount, once feedEl and feedEnd are bound to the DOM. */
 export function initFeedObserver() {
   observer = new IntersectionObserver(entries => {
     if (mode.value === 'feed' && feed.loaded && entries.some(e => e.isIntersecting)) loadFeed();
@@ -59,7 +59,7 @@ export function initFeedObserver() {
   observer.observe(feedEnd.value);
 }
 
-// ───────────────────────── Голоса и жалобы ─────────────────────────
+// ───────────────────────── Votes and reports ─────────────────────────
 
 function patchStory(id, patch) {
   const lists = [feed.items, current.value?.stories || [], whispers.value];

@@ -1,6 +1,6 @@
 /**
- * Обёртка над Leaflet. Здесь живут все объекты карты (вне реактивности Vue),
- * но нет знания о состоянии приложения: всё нужное приходит аргументами и колбэками.
+ * Leaflet wrapper. All map objects live here (outside Vue reactivity),
+ * but it knows nothing about app state: everything arrives via arguments and callbacks.
  */
 import { CITY } from './constants.js';
 import { store } from './services.js';
@@ -12,14 +12,14 @@ const markers = new Map();
 /**
  * @param {HTMLElement} el
  * @param {{onClick, onMove, onMoveEnd}} handlers
- * @returns {boolean} был ли сохранённый вид карты
+ * @returns {boolean} whether a saved map view was restored
  */
 export function initMap(el, { onClick, onMove }) {
   const saved = store.get('mapView', null);
   map = L.map(el, { zoomControl: false, minZoom: 3, worldCopyJump: true })
     .setView(saved?.center || CITY.center, saved?.zoom || CITY.zoom);
 
-  // Стандартные тайлы OSM; «ночной» вид делает CSS-фильтр (.map .leaflet-tile-pane).
+  // Standard OSM tiles; the night look is a CSS filter (.map .leaflet-tile-pane).
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -27,7 +27,7 @@ export function initMap(el, { onClick, onMove }) {
   L.control.zoom({ position: 'bottomright', zoomInTitle: 'Приблизить', zoomOutTitle: 'Отдалить' }).addTo(map);
   markersLayer = L.layerGroup().addTo(map);
 
-  // Контейнер меняет размер при снятии v-cloak, смене режима и раскладки — Leaflet нужно об этом знать.
+  // The container resizes when v-cloak is removed and on mode/layout changes, and Leaflet must be told.
   new ResizeObserver(() => map.invalidateSize()).observe(el);
 
   map.on('click', e => onClick({ lat: e.latlng.lat, lng: e.latlng.lng }));
@@ -51,7 +51,7 @@ export function getBounds() {
   return { west: b.getWest(), north: b.getNorth(), east: b.getEast(), south: b.getSouth() };
 }
 
-/** offsetY — на сколько пикселей сместить цель вверх, чтобы её не закрывала шторка. */
+/** offsetY: how many pixels to shift the target up so the bottom sheet doesn't cover it. */
 export function flyTo(lat, lng, zoom = map.getZoom(), offsetY = 0) {
   let target = L.latLng(lat, lng);
   if (offsetY) target = map.unproject(map.project(target, zoom).add([0, offsetY]), zoom);
@@ -62,7 +62,7 @@ export function flyToCity() {
   map.flyTo(CITY.center, CITY.zoom, { duration: 0.8 });
 }
 
-// ── Маркеры точек ──
+// ── Place markers ──
 
 export function renderMarkers(places, { category, selectedId, onSelect }) {
   if (!map) return;
@@ -95,7 +95,7 @@ export function setSelected(id) {
   }
 }
 
-// ── Метка черновика ──
+// ── Draft marker ──
 
 export function placeDraftMarker(lat, lng, onDragEnd) {
   if (!map) return;
@@ -115,7 +115,7 @@ export function removeDraftMarker() {
   if (draftMarker) { draftMarker.remove(); draftMarker = null; }
 }
 
-// ── «Я на карте» ──
+// ── "Me" on the map ──
 
 export function drawMe({ lat, lng }) {
   if (!meMarker) {
@@ -129,7 +129,7 @@ export function drawMe({ lat, lng }) {
   }
 }
 
-/** Круг точности вокруг синей точки. При точности лучше 25 м он только «мылит» точку — не рисуем. */
+/** Accuracy circle around the blue dot. Below 25 m it only blurs the dot, so it isn't drawn. */
 export function drawAccuracy({ lat, lng }, radius) {
   if (!radius || radius < 25) {
     if (meCircle) { meCircle.remove(); meCircle = null; }

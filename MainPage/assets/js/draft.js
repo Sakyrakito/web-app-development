@@ -1,4 +1,4 @@
-/** Черновик новой истории: выбор точки, метка на карте, определение адреса. */
+/** New story draft: picking a point, the map marker, address lookup. */
 import { mode, panel, sheetOpen, sideHidden, draft, tokens } from './state.js';
 import { setSelected, placeDraftMarker, removeDraftMarker } from './map.js';
 import { reverseGeocode as fetchAddress } from './services.js';
@@ -24,7 +24,7 @@ export function startCompose({ lat, lng, place = null }) {
   });
 }
 
-/** Убирает метку черновика; текст сохраняется — вдруг пользователь просто перепутал точку. */
+/** Remove the draft marker but keep the text, in case the user just picked the wrong spot. */
 export function leaveDraft() {
   tokens.geo++;
   draft.geocoding = false;
@@ -39,7 +39,7 @@ async function resolveAddress(lat, lng) {
     const address = await fetchAddress(lat, lng);
     if (token === tokens.geo) draft.address = address;
   } catch {
-    /* без адреса тоже можно публиковать */
+    /* publishing without an address is allowed */
   } finally {
     if (token === tokens.geo) draft.geocoding = false;
   }

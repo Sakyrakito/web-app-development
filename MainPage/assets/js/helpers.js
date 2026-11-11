@@ -1,9 +1,9 @@
 /**
- * Чистые функции без состояния: форматирование, цвета категорий, адреса, определение мобильного режима.
+ * Pure stateless functions: formatting, category colors, addresses, mobile detection.
  */
 import { CATS, NONE, MOBILE_BREAKPOINT } from './constants.js';
 
-// ───────────────────────── Форматирование ─────────────────────────
+// ───────────────────────── Formatting ─────────────────────────
 
 export function plural(n, [one, few, many]) {
   const m10 = n % 10, m100 = n % 100;
@@ -14,7 +14,7 @@ export function plural(n, [one, few, many]) {
 
 export const signed = n => (n > 0 ? `+${n}` : String(n));
 
-// SQLite отдаёт UTC без зоны: «2026-10-06 14:00:00»
+// SQLite returns UTC without a zone: "2026-10-06 14:00:00"
 export const parseTs = ts => new Date(ts.replace(' ', 'T') + 'Z');
 
 export function timeAgo(ts) {
@@ -35,13 +35,13 @@ export const fmtDistance = m => (m < 1000 ? `${Math.round(m / 10) * 10} м` : `$
 export const fmtClock = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 export const fmtCoords = p => (p && p.lat != null ? `${(+p.lat).toFixed(5)}°, ${(+p.lng).toFixed(5)}°` : '');
 export const snippet = text => (text.length > 90 ? text.slice(0, 88).trimEnd() + '…' : text);
-export const textLength = s => Array.from(s.trim()).length; // как mb_strlen на сервере
+export const textLength = s => Array.from(s.trim()).length; // matches mb_strlen on the server
 
-// ───────────────────────── Категории и цвета ─────────────────────────
+// ───────────────────────── Categories and colors ─────────────────────────
 
 export const catColor = key => (CATS[key] || NONE).color;
 
-/** Сегменты категорий в точке: [{key, n, color, label}] */
+/** Category segments at a place: [{key, n, color, label}] */
 export function mixSegments(mix, total) {
   const segs = Object.entries(CATS)
     .map(([key, c]) => ({ key, n: mix?.[key] || 0, color: c.color, label: c.label }))
@@ -67,7 +67,7 @@ export const dominantColor = segs => (segs.length ? segs.reduce((a, b) => (b.n >
 
 export const placeRing = p => conic(mixSegments(p.mix, p.stories));
 
-// ───────────────────────── Адреса ─────────────────────────
+// ───────────────────────── Addresses ─────────────────────────
 
 export function shortAddress(d) {
   const a = d.address || {};
@@ -78,7 +78,7 @@ export function shortAddress(d) {
   return parts.join(', ') || (d.display_name || '').split(',').slice(0, 2).join(',').trim();
 }
 
-// ───────────────────────── Устройство ─────────────────────────
+// ───────────────────────── Device ─────────────────────────
 
 const mobileQuery = matchMedia(MOBILE_BREAKPOINT);
 export const isMobile = () => mobileQuery.matches;

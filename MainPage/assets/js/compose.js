@@ -1,4 +1,4 @@
-/** Сценарий публикации истории: отмена, отправка, «добавить рядом со мной». */
+/** Story publishing flow: cancel, submit, "add near me". */
 import { userPos, draft, feed, draftText, draftOk, draftIssue, draftLen, toast } from './state.js';
 import { TEXT_MIN, TEXT_MAX } from './constants.js';
 import { api } from './services.js';

@@ -1,7 +1,7 @@
 <?php
 /**
  * POST /api/report.php  {story_id}
- * Одна жалоба на историю с сессии. При достижении порога история скрывается до модерации.
+ * One report per story per session. Once the threshold is reached, the story is hidden pending moderation.
  */
 declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
