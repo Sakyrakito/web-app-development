@@ -1,8 +1,8 @@
 <?php
 /**
- * Демо-наполнение для свежей базы (Гродно).
- * Формат: [lat, lng, address, [[category, likes, dislikes, hoursAgo, text], ...]]
- * Слухи, страшилки и приметы — вымышленный фольклор для демонстрации.
+ * Demo data for a fresh database (Grodno).
+ * Format: [lat, lng, address, [[category, likes, dislikes, hoursAgo, text], ...]]
+ * The rumors, horror stories and omens are fictional folklore for the demo.
  */
 return [
     [53.6773, 23.8226, 'Старый замок, ул. Замковая', [

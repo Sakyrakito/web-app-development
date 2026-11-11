@@ -1,6 +1,6 @@
 /**
- * Геолокация: разовое определение, слежение за перемещением, понятные тексты ошибок.
- * Сначала быстрый черновой замер, затем уточнение в режиме высокой точности.
+ * Geolocation: one-off fix, movement tracking, actionable error messages.
+ * A quick coarse fix first, then refinement in high-accuracy mode.
  */
 import { mode, userPos, geoAccuracy, locating, lastGeoError, toast } from './state.js';
 import { GEO_FINE, GEO_COARSE } from './constants.js';
@@ -11,7 +11,7 @@ const { nextTick } = Vue;
 
 let watchId = null;
 
-/** Вместо кода GeolocationPositionError — что именно делать пользователю. */
+/** Turn a GeolocationPositionError code into what the user should actually do. */
 function geoTrouble(err) {
   if (err.code === 1) {
     return 'Доступ к геопозиции запрещён: нажмите на замок слева от адреса → «Местоположение» → «Разрешить» и обновите страницу.';
@@ -30,21 +30,21 @@ function applyFix(pos, { fly = false } = {}) {
   drawAccuracy(userPos.value, geoAccuracy.value);
   if (!fly) return;
   mode.value = 'map';
-  // При грубом замере (километры) приближаться вплотную бессмысленно.
+  // Zooming in close is pointless when the fix is kilometres off.
   nextTick(() => { invalidateSize(); flyToPoint(lat, lng, accuracy > 300 ? 15 : 16); });
 }
 
-/** Точка едет за пользователем, как в Google Maps. */
+/** The dot follows the user, like in Google Maps. */
 export function trackMe() {
   if (watchId !== null || !('geolocation' in navigator)) return;
   watchId = navigator.geolocation.watchPosition(
     pos => applyFix(pos),
-    () => { /* черновое положение уже показано — уточнение необязательно */ },
+    () => { /* the coarse position is already shown, so refinement is optional */ },
     GEO_FINE,
   );
 }
 
-/** Перестаём опрашивать датчики, пока вкладка скрыта: на телефоне это экономит батарею. */
+/** Stop polling sensors while the tab is hidden: saves battery on phones. */
 export function stopTracking() {
   if (watchId === null) return;
   navigator.geolocation.clearWatch(watchId);
@@ -64,7 +64,7 @@ export function locate({ fly = true, silent = false } = {}) {
     return Promise.resolve(fail('Геолокация недоступна в этом браузере.'));
   }
 
-  // Координаты отдаются только «доверенному» источнику: https, localhost или 127.0.0.1.
+  // Browsers only expose coordinates to a secure origin: https, localhost or 127.0.0.1.
   if (location.protocol === 'file:' || !window.isSecureContext) {
     return Promise.resolve(fail(
       'Браузер отдаёт геопозицию только на https или на localhost, а сайт открыт не оттуда. '

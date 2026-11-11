@@ -1,15 +1,15 @@
 <?php
 /**
- * Общий bootstrap для всех эндпоинтов API:
- * анонимная сессия, подключение к SQLite, JSON-хелперы, выборка историй.
+ * Shared bootstrap for all API endpoints:
+ * anonymous session, SQLite connection, JSON helpers, story queries.
  */
 declare(strict_types=1);
 
 const DB_PATH       = __DIR__ . '/../storage/legends.sqlite';
-const POST_COOLDOWN = 300;   // секунд между публикациями с одной сессии
+const POST_COOLDOWN = 300;   // seconds between posts from one session
 const TEXT_MIN      = 20;
 const TEXT_MAX      = 2000;
-const SNAP_METERS   = 30;    // история ближе этого расстояния прилипает к существующей точке
+const SNAP_METERS   = 30;    // a story closer than this snaps to the existing place
 const CATEGORIES    = ['rumor', 'horror', 'history', 'omen'];
 
 ini_set('display_errors', '0');
@@ -31,7 +31,7 @@ session_set_cookie_params([
     'samesite' => 'Lax',
 ]);
 session_start();
-// В БД храним не сам id сессии, а его хеш — утечка базы не даст угнать сессии.
+// Store a hash of the session id, not the id itself, so a leaked database can't be used to hijack sessions.
 define('ACTOR', hash('sha256', session_id()));
 session_write_close();
 
@@ -107,7 +107,7 @@ function require_method(string ...$methods): string
     return $method;
 }
 
-/** Тело POST-запроса. Требуем JSON — обычная HTML-форма с чужого сайта так не отправит (защита от CSRF). */
+/** POST body. Requiring JSON is the CSRF defence: a plain HTML form on another site can't send it. */
 function body(): array
 {
     if (!str_starts_with($_SERVER['CONTENT_TYPE'] ?? '', 'application/json')) {
@@ -165,7 +165,7 @@ function distance_m(float $lat1, float $lng1, float $lat2, float $lng2): float
     return 2 * $r * asin(min(1, sqrt($a)));
 }
 
-/** Базовая выборка видимых историй вместе с точкой и состоянием текущей сессии. */
+/** Base query for visible stories with their place and the current session's vote/report state. */
 const STORY_SELECT = <<<SQL
     SELECT s.id, s.text, s.category, s.likes, s.dislikes,
            (s.likes - s.dislikes) AS rating, s.created_at,

@@ -254,7 +254,15 @@
 
 # Запуск
 
-Нужен PHP 8.1+ с расширением `pdo_sqlite`. База SQLite создаётся сама при первом запросе (`storage/legends.sqlite`) и наполняется демо-легендами Гродно.
+Через Docker (ничего, кроме Docker, ставить не нужно):
+
+```bash
+docker compose up --build
+```
+
+База хранится в томе `legends-data` и переживает пересборку контейнера; `docker compose down -v` удаляет её вместе с пользовательскими историями.
+
+Без Docker нужен PHP 8.1+ с расширением `pdo_sqlite`. База SQLite создаётся сама при первом запросе (`storage/legends.sqlite`) и наполняется демо-легендами Гродно.
 
 ```bash
 php -S localhost:8000 router.php

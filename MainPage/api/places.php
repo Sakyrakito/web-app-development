@@ -1,7 +1,7 @@
 <?php
 /**
- * GET /api/places.php[?category=horror]  — точки для маркеров карты (агрегаты по видимым историям)
- * GET /api/places.php?id=12              — одна точка со списком её историй
+ * GET /api/places.php[?category=horror]  — places for map markers (aggregated over visible stories)
+ * GET /api/places.php?id=12              — one place with its stories
  */
 declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';

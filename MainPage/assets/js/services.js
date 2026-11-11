@@ -1,4 +1,4 @@
-/** Внешний мир: PHP API, localStorage, Nominatim (OpenStreetMap). */
+/** External I/O: PHP API, localStorage, Nominatim (OpenStreetMap). */
 import { shortAddress } from './helpers.js';
 
 // ───────────────────────── PHP API ─────────────────────────
@@ -15,7 +15,7 @@ export async function api(path, { method = 'GET', params, body } = {}) {
     body: body ? JSON.stringify(body) : undefined,
   });
   let data = null;
-  try { data = await res.json(); } catch { /* сервер вернул не JSON */ }
+  try { data = await res.json(); } catch { /* server returned non-JSON */ }
   if (!res.ok || data === null) {
     const err = new Error(data?.error || `Сервер не отвечает (${res.status})`);
     err.status = res.status;
@@ -33,7 +33,7 @@ export const store = {
     catch { return fallback; }
   },
   set(key, value) {
-    try { localStorage.setItem(`legends:${key}`, JSON.stringify(value)); } catch { /* приватный режим */ }
+    try { localStorage.setItem(`legends:${key}`, JSON.stringify(value)); } catch { /* private browsing */ }
   },
 };
 
@@ -41,7 +41,7 @@ export const store = {
 
 const BASE = 'https://nominatim.openstreetmap.org';
 
-/** Адрес по координатам. Бросает ошибку, если сервис недоступен. */
+/** Reverse-geocode coordinates. Throws if the service is unavailable. */
 export async function reverseGeocode(lat, lng) {
   const url = new URL(`${BASE}/reverse`);
   url.search = new URLSearchParams({ format: 'jsonv2', zoom: '18', 'accept-language': 'ru', lat, lon: lng });
@@ -50,7 +50,7 @@ export async function reverseGeocode(lat, lng) {
   return shortAddress(await res.json());
 }
 
-/** Поиск места по тексту с приоритетом текущей области карты. bounds: {west,north,east,south} */
+/** Text place search, biased toward the current map view. bounds: {west,north,east,south} */
 export async function searchPlaces(q, bounds) {
   const url = new URL(`${BASE}/search`);
   url.search = new URLSearchParams({

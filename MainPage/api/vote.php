@@ -1,7 +1,7 @@
 <?php
 /**
  * POST /api/vote.php  {story_id, value: 1 | -1}
- * Повторный голос с тем же значением снимает голос, противоположный — переключает.
+ * Repeating the same vote removes it; the opposite value switches it.
  */
 declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
@@ -40,7 +40,7 @@ if ($new === 0) {
         ->execute([$storyId, ACTOR, $new]);
 }
 
-// Счётчики меняем дельтой, а не пересчётом: так сохраняются стартовые значения демо-данных.
+// Apply deltas instead of recounting so the seed data's initial counts are preserved.
 $pdo->prepare('UPDATE stories SET likes = likes + :dl, dislikes = dislikes + :dd WHERE id = :id')
     ->execute([
         ':dl' => (int) ($new === 1) - (int) ($old === 1),

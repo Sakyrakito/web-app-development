@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500;1,600;1,700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+        integrity="sha256-YU3qCpj/P06tdPBJGPax0bm6Q1wltfwjsho5TR4+TYc=" crossorigin="">
   <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
@@ -19,7 +21,7 @@
 <div id="app" v-cloak>
   <div class="app" :class="{ 'is-feed': mode === 'feed', 'is-side-hidden': sideHidden && mode === 'map', 'is-top-hidden': topHidden && mode === 'map' }">
 
-    <!-- ───────── Шапка: логотип · переключатель Карта/Лента · поиск ───────── -->
+    <!-- ───────── Header: logo · Map/Feed toggle · search ───────── -->
     <header class="top">
       <a class="brand" href="./" @click.prevent="goHome" aria-label="Городские легенды — на главную">
         <span class="brand__mark" aria-hidden="true"><i></i></span>
@@ -63,7 +65,7 @@
       </div>
     </header>
 
-    <!-- ───────── Рейка категорий (на телефоне — горизонтальные чипы) ───────── -->
+    <!-- ───────── Category rail (horizontal chips on mobile) ───────── -->
     <nav class="rail" aria-label="Фильтр по категориям">
       <button type="button" class="rail__item" :class="{ 'is-active': !category }" style="--cat: #f2eadb" @click="category = null">
         <span class="rail__glyph">✦</span>
@@ -82,7 +84,7 @@
       </button>
     </nav>
 
-    <!-- ───────── Сцена: карта или лента ───────── -->
+    <!-- ───────── Stage: map or feed ───────── -->
     <main class="stage">
       <section class="map-wrap" v-show="mode === 'map'" aria-label="Карта легенд">
         <div ref="mapEl" class="map"></div>
@@ -93,13 +95,13 @@
           <span class="map-hud__me" v-if="geoAccuracy">вы здесь · точность ±{{ geoAccuracy }} м</span>
         </div>
 
-        <!-- ПК: скрыть/показать правую панель -->
+        <!-- Desktop: hide/show the right panel -->
         <button type="button" class="map-toggle map-toggle--side" :class="{ 'is-off': sideHidden }"
                 :aria-pressed="sideHidden" :title="sideHidden ? 'Показать панель' : 'Скрыть панель'"
                 :aria-label="sideHidden ? 'Показать панель подробностей' : 'Скрыть панель подробностей'" @click="toggleSide">
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16"/></svg>
         </button>
-        <!-- Телефон: скрыть/показать верхнее меню -->
+        <!-- Mobile: hide/show the top menu -->
         <button type="button" class="map-toggle map-toggle--top" :class="{ 'is-off': topHidden }"
                 :aria-pressed="topHidden" :title="topHidden ? 'Показать меню' : 'Скрыть меню'"
                 :aria-label="topHidden ? 'Показать верхнее меню' : 'Скрыть верхнее меню'" @click="toggleTop">
@@ -150,7 +152,7 @@
       </section>
     </main>
 
-    <!-- ───────── Боковая панель (на телефоне — выезжающая шторка) ───────── -->
+    <!-- ───────── Side panel (bottom sheet on mobile) ───────── -->
     <aside class="side" :class="{ 'is-open': sheetOpen }" v-show="mode === 'map'" aria-label="Подробности">
       <button type="button" class="side__handle" :aria-expanded="sheetOpen" @click="sheetOpen = !sheetOpen">
         <i aria-hidden="true"></i>
@@ -160,7 +162,7 @@
       <div class="side__body">
         <transition name="swap" mode="out-in">
 
-          <!-- Обзор -->
+          <!-- Overview -->
           <div v-if="panel === 'overview'" key="overview" class="panel">
             <p class="kicker">Ночной атлас · {{ CITY.name }}</p>
             <h2 class="display">У каждого двора есть <em>своя тайна</em></h2>
@@ -204,7 +206,7 @@
             </ul>
           </div>
 
-          <!-- Точка -->
+          <!-- Place -->
           <div v-else-if="panel === 'place'" :key="'place' + (current ? current.place.id : '')" class="panel">
             <button type="button" class="back" @click="closePanel">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Все огни
@@ -226,7 +228,7 @@
             <div v-else class="loader" aria-label="Загрузка"><i></i><i></i><i></i></div>
           </div>
 
-          <!-- Новая история -->
+          <!-- New story -->
           <form v-else key="compose" class="panel composer" @submit.prevent="submitDraft" novalidate>
             <button type="button" class="back" @click="cancelDraft()">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Отмена
@@ -285,6 +287,8 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"
+        integrity="sha256-Hk4dIpcqOSb0hZjgyvFOP+cEmDXUKKNE/tT542ZbNQg=" crossorigin=""></script>
 <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.prod.js"></script>
 <script type="module" src="assets/js/main.js"></script>
 </body>

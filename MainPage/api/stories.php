@@ -1,7 +1,7 @@
 <?php
 /**
- * GET  /api/stories.php?sort=new|hot|top|near[&lat=&lng=][&category=][&offset=][&limit=]  — лента
- * POST /api/stories.php  {text, category?, lat, lng, address?, place_id?}             — новая история
+ * GET  /api/stories.php?sort=new|hot|top|near[&lat=&lng=][&category=][&offset=][&limit=]  — feed
+ * POST /api/stories.php  {text, category?, lat, lng, address?, place_id?}             — new story
  */
 declare(strict_types=1);
 require __DIR__ . '/bootstrap.php';
@@ -26,8 +26,8 @@ if ($method === 'GET') {
 
     switch ($sort) {
         case 'hot':
-            // «Обсуждают»: все голоса (и «верю», и «не верю»), делённые на возраст в часах —
-            // наверх всплывают свежие спорные истории.
+            // "Hot": all votes (both "believe" and "don't believe") divided by age in hours,
+            // so fresh controversial stories rise to the top.
             $sql .= " ORDER BY (s.likes + s.dislikes) * 1.0 / ((julianday('now') - julianday(s.created_at)) * 24 + 2) DESC, s.created_at DESC";
             break;
         case 'top':
@@ -37,8 +37,8 @@ if ($method === 'GET') {
             if ($lat === null || $lng === null) {
                 fail('Для сортировки по близости нужны lat и lng');
             }
-            // Квадрат расстояния в «плоской» проекции: для сортировки в пределах города точности хватает,
-            // а тригонометрия в SQLite есть не во всех сборках.
+            // Squared distance on a flat projection: accurate enough for sorting within one city,
+            // and not every SQLite build has trig functions.
             $sql .= ' ORDER BY ((p.lat - :lat) * (p.lat - :lat) + ((p.lng - :lng) * :k) * ((p.lng - :lng) * :k)) ASC, rating DESC';
             $params += [':lat' => $lat, ':lng' => $lng, ':k' => cos(deg2rad($lat))];
             break;
@@ -64,7 +64,7 @@ if ($method === 'GET') {
     json_out(['items' => $items, 'has_more' => count($items) === $limit]);
 }
 
-// --- POST: публикация ---
+// --- POST: publish ---
 $in       = body();
 $text     = trim((string) ($in['text'] ?? ''));
 $category = category_param($in);
@@ -80,8 +80,8 @@ if ($len < TEXT_MIN) {
 if ($len > TEXT_MAX) {
     fail('История слишком длинная — максимум ' . TEXT_MAX . ' символов');
 }
-// Анонимность защищает автора, но не должна бить по другим людям: контакты и ссылки не пропускаем.
-// Те же проверки дублируются на клиенте (CONTACT_RULES в app.js), чтобы предупредить до отправки.
+// Anonymity protects the author but must not be used against other people: contacts and links are rejected.
+// The same checks run on the client (CONTACT_RULES in assets/js/constants.js) to warn before submitting.
 if (preg_match('/(?<!\d)(?:\+?\d[\s\-()]{0,2}){7,}(?!\d)/u', $text)) {
     fail('Уберите номер телефона: легенды — о местах, а не о конкретных людях');
 }
@@ -114,7 +114,7 @@ if ($placeId !== null) {
         $pdo->rollBack();
         fail('Не указаны координаты');
     }
-    // Ищем существующую точку рядом, чтобы истории одного двора собирались в один маркер.
+    // Reuse a nearby place so stories about the same courtyard share one marker.
     $dLat = SNAP_METERS / 111320;
     $dLng = $dLat / max(0.01, cos(deg2rad($lat)));
     $stmt = $pdo->prepare('SELECT id, lat, lng FROM places

@@ -1,4 +1,4 @@
-/** Точки на карте: загрузка, маркеры, боковая панель, навигация и камера. */
+/** Map places: loading, markers, side panel, navigation and camera. */
 import {
   mode, category, places, panel, current, sheetOpen, sideHidden, topHidden, whispers, tokens, toast, visiblePlaces,
 } from './state.js';
@@ -9,16 +9,16 @@ import { leaveDraft } from './draft.js';
 
 const { nextTick } = Vue;
 
-// ───────────────────────── Камера ─────────────────────────
+// ───────────────────────── Camera ─────────────────────────
 
-/** На телефоне шторка закрывает низ карты — сдвигаем цель в видимую часть. */
+/** On mobile the bottom sheet covers the lower map, so shift the target into the visible area. */
 export function flyToPoint(lat, lng, zoom) {
   const sheet = document.querySelector('.side');
   const offsetY = isMobile() && sheetOpen.value && sheet ? sheet.offsetHeight / 2 : 0;
   flyTo(lat, lng, zoom, offsetY);
 }
 
-// ───────────────────────── Загрузка точек и маркеры ─────────────────────────
+// ───────────────────────── Loading places and markers ─────────────────────────
 
 let refreshTimer = null;
 
@@ -47,10 +47,10 @@ export function schedulePlacesRefresh() {
 export async function loadWhispers() {
   try {
     whispers.value = (await api('stories.php', { params: { sort: 'new', limit: 10 } })).items;
-  } catch { /* бегущая строка — необязательное украшение */ }
+  } catch { /* the ticker is optional decoration */ }
 }
 
-// ───────────────────────── Панель точки ─────────────────────────
+// ───────────────────────── Place panel ─────────────────────────
 
 export async function openPlace(id, { fly = true } = {}) {
   const token = ++tokens.place;
@@ -58,7 +58,7 @@ export async function openPlace(id, { fly = true } = {}) {
   if (current.value?.place.id !== id) current.value = null;
   panel.value = 'place';
   sheetOpen.value = true;
-  sideHidden.value = false;   // скрытая панель раскрывается, когда в ней есть что показать
+  sideHidden.value = false;   // a hidden panel reopens when it has something to show
   setSelected(id);
   try {
     const data = await api('places.php', { params: { id } });
@@ -95,15 +95,15 @@ export function goHome() {
   nextTick(() => { invalidateSize(); flyToCity(); });
 }
 
-// ───────────────────────── Скрытие интерфейса на карте ─────────────────────────
+// ───────────────────────── Hiding UI on the map ─────────────────────────
 
-/** ПК: показать/скрыть правую панель — карта занимает освободившееся место. */
+/** Desktop: show/hide the right panel; the map fills the freed space. */
 export function toggleSide() {
   sideHidden.value = !sideHidden.value;
   store.set('sideHidden', sideHidden.value);
 }
 
-/** Телефон: показать/скрыть верхнее меню (логотип, переключатель, поиск). */
+/** Mobile: show/hide the top menu (logo, toggle, search). */
 export function toggleTop() {
   topHidden.value = !topHidden.value;
   store.set('topHidden', topHidden.value);

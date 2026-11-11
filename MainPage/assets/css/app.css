@@ -1,6 +1,6 @@
 /* ==========================================================================
-   «Городские легенды» — ночной атлас.
-   ПК: CSS Grid (шапка / рейка / сцена / панель). Телефон: Flexbox + шторка.
+   "Urban Legends": night atlas.
+   Desktop: CSS Grid (header / rail / stage / panel). Mobile: Flexbox + bottom sheet.
    ========================================================================== */
 
 :root {
@@ -52,7 +52,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Плёночное зерно поверх всего интерфейса */
+/* Film grain over the whole UI */
 body::after {
   content: '';
   position: fixed;
@@ -100,7 +100,7 @@ svg {
 .display--sm { font-size: 32px; line-height: 1.02; }
 
 /* ==========================================================================
-   Каркас: Grid на ПК
+   Layout: Grid on desktop
    ========================================================================== */
 
 .app {
@@ -123,7 +123,7 @@ svg {
 }
 
 /* ==========================================================================
-   Шапка
+   Header
    ========================================================================== */
 
 .top {
@@ -147,7 +147,7 @@ svg {
   text-decoration: none;
 }
 
-/* Огонёк с орбитой — знак проекта */
+/* Orbiting glow: the project logo */
 .brand__mark {
   position: relative;
   width: 42px;
@@ -186,7 +186,7 @@ svg {
   color: var(--muted);
 }
 
-/* Переключатель Карта / Лента с «пружинящим» огоньком */
+/* Map / Feed toggle with a springy glow */
 .switch {
   position: relative;
   display: grid;
@@ -338,7 +338,7 @@ svg {
 .icon-btn.is-busy svg { animation: spin 1.1s linear infinite; color: var(--ember-2); }
 
 /* ==========================================================================
-   Рейка категорий
+   Category rail
    ========================================================================== */
 
 .rail {
@@ -442,7 +442,7 @@ svg {
 .rail__add:hover { transform: rotate(90deg) scale(1.08); }
 
 /* ==========================================================================
-   Сцена: карта
+   Stage: map
    ========================================================================== */
 
 .stage {
@@ -459,7 +459,7 @@ svg {
 .map-wrap { position: absolute; inset: 0; }
 .map { position: absolute; inset: 0; background: var(--ink-1); }
 
-/* Виньетка — края карты тонут в темноте */
+/* Vignette: map edges fade into darkness */
 .map-wrap::after {
   content: '';
   position: absolute;
@@ -472,7 +472,7 @@ svg {
 }
 
 .leaflet-container { background: var(--ink-1); font-family: var(--font-ui); }
-/* Светлые тайлы OSM → ночная карта с холодным индиго-оттенком */
+/* Light OSM tiles → night map with a cold indigo tint */
 .map .leaflet-tile-pane { filter: invert(1) hue-rotate(185deg) brightness(.82) contrast(.92) saturate(.55) sepia(.18); }
 
 .leaflet-bar { border: 0 !important; box-shadow: 0 12px 30px -10px rgba(0, 0, 0, .7) !important; }
@@ -500,7 +500,7 @@ svg {
 }
 .leaflet-control-attribution a { color: var(--paper-2) !important; }
 
-/* Координатный «HUD» */
+/* Coordinate HUD */
 .map-hud {
   position: absolute;
   z-index: 500;
@@ -540,7 +540,7 @@ svg {
 }
 .map-hint i { font-style: normal; color: var(--ember-2); margin-right: 4px; }
 
-/* Бегущая строка последних историй */
+/* Ticker of recent stories */
 .whispers {
   position: absolute;
   z-index: 500;
@@ -595,7 +595,7 @@ svg {
 .whispers__run button:hover { color: var(--paper); }
 .whispers__run i { width: 7px; height: 7px; border-radius: 50%; flex: none; box-shadow: 0 0 10px currentColor; }
 
-/* Маркеры-огни: кольцо = доли категорий, ядро = свечение, размер = рейтинг */
+/* Glow markers: ring = category shares, core = glow, size = rating */
 .orb-icon, .drop-icon, .me-icon { background: none; border: 0; }
 
 .orb {
@@ -628,6 +628,12 @@ svg {
   color: var(--paper);
   text-shadow: 0 1px 6px rgba(0, 0, 0, .9);
 }
+.orb--cluster {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, .45),
+    0 0 0 5px color-mix(in srgb, var(--glow) 22%, transparent),
+    0 0 calc(var(--s) * .55) color-mix(in srgb, var(--glow) 55%, transparent);
+}
 .orb:hover { transform: scale(1.15); }
 .orb.is-selected { transform: scale(1.2); }
 .orb.is-selected::after {
@@ -647,7 +653,7 @@ svg {
   animation: ripple 2.8s ease-out var(--d) infinite;
 }
 
-/* Метка новой истории — «капля чернил», её можно перетаскивать */
+/* New-story marker: a draggable "ink drop" */
 .drop {
   position: relative;
   width: 48px;
@@ -699,7 +705,7 @@ svg {
 }
 
 /* ==========================================================================
-   Сцена: лента
+   Stage: feed
    ========================================================================== */
 
 .feed {
@@ -755,7 +761,7 @@ svg {
   gap: 16px;
 }
 
-/* Первая карточка — «обложка» на две колонки, если место позволяет */
+/* First card spans two columns as a "cover" when there is room */
 @container (min-width: 680px) {
   .story--featured,
   .skeleton--featured { grid-column: span 2; grid-row: span 2; }
@@ -792,7 +798,7 @@ svg {
 }
 
 /* ==========================================================================
-   Карточка истории
+   Story card
    ========================================================================== */
 
 .story {
@@ -810,7 +816,7 @@ svg {
   transition: transform .4s var(--ease-bounce), border-color .3s, box-shadow .3s;
   animation: rise .5s var(--ease-out) both;
 }
-/* Цветное свечение в углу по категории */
+/* Category-colored corner glow */
 .story::before {
   content: '';
   position: absolute;
@@ -880,7 +886,7 @@ svg {
   white-space: pre-line;
   overflow-wrap: anywhere;
 }
-/* Буквица */
+/* Drop cap */
 .story__text::first-letter {
   float: left;
   padding: 6px 8px 0 0;
@@ -1006,7 +1012,7 @@ svg {
 .story--compact::before { width: 160px; height: 160px; top: -70px; right: -70px; }
 
 /* ==========================================================================
-   Боковая панель
+   Side panel
    ========================================================================== */
 
 .side {
@@ -1123,7 +1129,7 @@ svg {
 .legend i { width: 10px; height: 10px; border-radius: 50%; }
 .legend span { color: var(--muted); text-align: right; font-size: 12.5px; }
 
-/* Кодекс шёпота */
+/* "Whisper code": posting etiquette */
 .code {
   display: flex;
   flex-direction: column;
@@ -1208,7 +1214,7 @@ svg {
   font-size: 15px;
   font-weight: 800;
   letter-spacing: .01em;
-  /* Третья тень «гасит» контент, который прокручивается под прилипшей кнопкой */
+  /* The third shadow dims content scrolling under the sticky button */
   box-shadow: 0 16px 36px -12px var(--ember-glow), inset 0 1px 0 rgba(255, 255, 255, .4), 0 -14px 22px -4px var(--ink-1);
   transition: transform .35s var(--ease-bounce), filter .2s;
 }
@@ -1226,7 +1232,7 @@ svg {
 .loader i:nth-child(2) { animation-delay: .15s; }
 .loader i:nth-child(3) { animation-delay: .3s; }
 
-/* Форма новой истории */
+/* New story form */
 .field { display: flex; flex-direction: column; gap: 10px; }
 .field__label { font-size: 13px; font-weight: 700; color: var(--paper-2); }
 
@@ -1238,7 +1244,7 @@ svg {
   border: 1px solid var(--line-2);
   outline: 0;
   background-color: var(--ink-1);
-  /* Строки как в блокноте — прокручиваются вместе с текстом */
+  /* Notebook lines that scroll with the text */
   background-image: repeating-linear-gradient(180deg, transparent 0 25px, rgba(242, 234, 219, .06) 25px 26px);
   background-position: 0 13px;
   background-attachment: local;
@@ -1309,10 +1315,10 @@ svg {
 
 .fineprint { margin: -6px 0 0; text-align: center; font: 500 11px var(--font-mono); color: var(--muted); }
 
-/* Кнопка «+» на телефоне */
+/* "+" button on mobile */
 .fab { display: none; }
 
-/* Уведомления */
+/* Toasts */
 .toasts {
   position: fixed;
   z-index: 300;
@@ -1341,7 +1347,7 @@ svg {
 .toast--error { border-left-color: var(--danger); }
 
 /* ==========================================================================
-   Анимации
+   Animations
    ========================================================================== */
 
 .swap-enter-active, .swap-leave-active { transition: opacity .22s, transform .22s var(--ease-out); }
@@ -1377,7 +1383,7 @@ svg {
 }
 
 /* ==========================================================================
-   Узкий ПК / планшет
+   Narrow desktop / tablet
    ========================================================================== */
 
 @media (max-height: 760px) and (min-width: 861px) {
@@ -1396,7 +1402,7 @@ svg {
 }
 
 /* ==========================================================================
-   Телефон: Flexbox-колонка + шторка снизу
+   Mobile: Flexbox column + bottom sheet
    ========================================================================== */
 
 @media (max-width: 860px) {
@@ -1446,7 +1452,7 @@ svg {
   .search__results { width: 100%; }
   .icon-btn { width: 44px; height: 44px; }
 
-  /* Рейка превращается в ленту чипов */
+  /* The category rail becomes a row of chips */
   .rail {
     flex: none;
     flex-direction: row;
@@ -1484,9 +1490,9 @@ svg {
   .map-hud__city { font-size: 19px; }
   .map-hint, .whispers { display: none; }
   .map .leaflet-bottom { bottom: var(--peek); }
-  .map .leaflet-control-zoom { display: none; } /* на телефоне масштабируют жестами */
+  .map .leaflet-control-zoom { display: none; } /* mobile users zoom with gestures */
 
-  /* Шторка */
+  /* Bottom sheet */
   .side {
     position: fixed;
     z-index: 60;
@@ -1525,7 +1531,7 @@ svg {
   .display { font-size: 34px; }
   .display--sm { font-size: 28px; }
 
-  /* Лента — простая flex-колонка */
+  /* Feed is a plain flex column */
   .feed { padding: 22px 16px calc(100px + env(safe-area-inset-bottom)); }
   .feed__head { margin-bottom: 20px; }
   .sorter { width: 100%; }
@@ -1555,14 +1561,14 @@ svg {
 }
 
 /* ==========================================================================
-   Скрытие интерфейса на карте
-   ПК — правая панель (.side), телефон — верхнее меню (.top)
+   Hiding UI on the map
+   Desktop: right panel (.side); mobile: top menu (.top)
    ========================================================================== */
 
 .map-toggle {
   position: absolute;
   z-index: 500;
-  top: 62px;                      /* под подсказкой «Нажмите на любую точку» */
+  top: 62px;                      /* below the "tap anywhere" hint */
   right: 16px;
   width: 42px;
   height: 42px;
@@ -1595,6 +1601,6 @@ svg {
   .map-toggle--top { display: grid; }
 
   .app.is-top-hidden .top { display: none; }
-  /* без шапки чипы категорий сами уходят под вырез/статус-бар */
+  /* without the header, the chips would slide under the notch/status bar */
   .app.is-top-hidden .rail { padding-top: max(12px, env(safe-area-inset-top)); }
 }
